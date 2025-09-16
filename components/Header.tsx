@@ -16,7 +16,7 @@ function Header() {
           <div className="flex items-center">
             <Link href="/">
               <Image
-                src="/starsight-bgcheck-logo.png"
+                src="/starsightLogo1.png"
                 alt="starsight logo"
                 width="117"
                 height="42"
