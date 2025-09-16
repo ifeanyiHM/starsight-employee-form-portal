@@ -238,7 +238,7 @@ export default function EmployeeData() {
             >
               <div className="flex justify-center m-0">
                 <Image
-                  src="/starsight-empdata-logo.png"
+                  src="/starsightEmpdataLogo.png"
                   alt="starsight logo"
                   width="186"
                   height="64"

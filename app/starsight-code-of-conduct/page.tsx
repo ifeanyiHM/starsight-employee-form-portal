@@ -25,7 +25,7 @@ export default function CodeOfConduct() {
           >
             <div className="flex justify-center m-0">
               <Image
-                src="/starsight-coc-logo.png"
+                src="/starsightCocLogo.png"
                 alt="starsight logo"
                 width="250"
                 height="80"

@@ -242,7 +242,7 @@ export default function BackgroundCheck() {
             >
               <div className="flex justify-end mb-10 mr-16">
                 <Image
-                  src="/starsight-bgcheck-logo.png"
+                  src="/starsightBgcheckLogo.png"
                   alt="starsight logo"
                   width="117"
                   height="42"
