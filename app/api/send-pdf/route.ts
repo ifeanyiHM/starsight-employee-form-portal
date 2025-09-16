@@ -52,13 +52,14 @@ export async function POST(req: NextRequest) {
 
     const info = await transporter.sendMail({
       from: process.env.SMTP_USER,
-      to: "iheme.ifeanyi@yahoo.com",
+      to: "obianorue123@gmail.com",
+      // to: "iheme.ifeanyi@yahoo.com",
       subject: "Form Submission Confirmation",
       html: `
         <h2>Form Submission Received</h2>
         <p><strong> From:</strong>Employee Name: ${fullName}</p>
         <p><strong>Submitted:</strong> ${new Date().toLocaleString()}</p>
-        <p>Thank you for your submission. Your form data and uploaded files are attached.</p>
+        <p>Kindly find attached the documents submitted by ${fullName} for your review.</p>
      
       `,
       attachments,
