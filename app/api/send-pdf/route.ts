@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
 
     // Add generated PDF
     attachments.push({
-      filename: `background-check-form-${fullName}.pdf`,
+      filename: generatedFile.name,
       content: Buffer.from(await generatedFile.arrayBuffer()),
       contentType: "application/pdf",
     });

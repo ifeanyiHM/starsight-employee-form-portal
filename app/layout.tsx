@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Roboto, Source_Sans_3 } from "next/font/google";
+import { FormProvider } from "../context/FormContext";
 import "./globals.css";
 
 // Import Source Sans 3
@@ -31,7 +32,7 @@ export default function RootLayout({
       <body
         className={`${sourceSans3.variable} ${roboto.variable} antialiased`}
       >
-        {children}
+        <FormProvider>{children}</FormProvider>
       </body>
     </html>
   );

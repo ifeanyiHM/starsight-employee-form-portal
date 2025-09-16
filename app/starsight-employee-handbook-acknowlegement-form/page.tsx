@@ -1,8 +1,13 @@
 "use client";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import Footer from "../../components/Footer";
 import Header from "../../components/Header";
+import {
+  loadFilesFromLocalStorage,
+  saveFilesToLocalStorage,
+} from "../../utils/browserStorage";
 import { generatePDFFromSections } from "../../utils/pdfGenerator";
 
 export interface EmployeeAcknowlegementProp {
@@ -16,6 +21,8 @@ export interface EmployeeAcknowlegementProp {
 
 export default function EmployeeAcknowlegement() {
   const [loading, setLoading] = useState(false);
+
+  const router = useRouter();
 
   const methods = useForm<EmployeeAcknowlegementProp>({
     defaultValues: {
@@ -34,17 +41,50 @@ export default function EmployeeAcknowlegement() {
     handleSubmit,
     formState: { errors },
     reset,
-    // control,
-    // setValue,
-    // watch,
   } = methods;
+
+  // const onSubmit = async (data: EmployeeAcknowlegementProp): Promise<void> => {
+  //   setLoading(true);
+
+  //   try {
+  //     // Generate PDF from the three sections
+  //     const sectionIds = ["section-1", "section-2", "section-3"];
+  //     const pdf = await generatePDFFromSections(sectionIds);
+
+  //     // Convert PDF to blob
+  //     const pdfBlob = pdf.output("blob");
+
+  //     // Send to backend API for emailing
+  //     const formData = new FormData();
+  //     formData.append("file", pdfBlob, "form-data.pdf");
+  //     formData.append("email", `Employee Name: ${data.Name}`);
+
+  //     const response = await fetch("/api/send-pdf", {
+  //       method: "POST",
+  //       body: formData,
+  //     });
+
+  //     if (response.ok) {
+  //       alert("PDF sent successfully!");
+  //       // ✅ Clear all inputs including textareas
+  //       reset();
+  //     } else {
+  //       throw new Error("Failed to send email");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error:", error);
+  //     alert("Failed to generate or send PDF");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   const onSubmit = async (data: EmployeeAcknowlegementProp): Promise<void> => {
     setLoading(true);
 
     try {
       // Generate PDF from the three sections
-      const sectionIds = ["section-1", "section-2", "section-3"];
+      const sectionIds = ["section-1"];
       const pdf = await generatePDFFromSections(sectionIds);
 
       // Convert PDF to blob
@@ -52,21 +92,30 @@ export default function EmployeeAcknowlegement() {
 
       // Send to backend API for emailing
       const formData = new FormData();
-      formData.append("file", pdfBlob, "form-data.pdf");
+      formData.append("file", pdfBlob, "employee-handbook-acknowlegement.pdf");
       formData.append("email", `Employee Name: ${data.Name}`);
 
-      const response = await fetch("/api/send-pdf", {
-        method: "POST",
-        body: formData,
+      const existingFiles = loadFilesFromLocalStorage();
+
+      // extract only the File objects
+      const combinedFiles: File[] = [...existingFiles];
+      formData.forEach((value) => {
+        if (value instanceof File) {
+          combinedFiles.push(value);
+        }
       });
 
-      if (response.ok) {
-        alert("PDF sent successfully!");
-        // ✅ Clear all inputs including textareas
-        reset();
-      } else {
-        throw new Error("Failed to send email");
-      }
+      await saveFilesToLocalStorage(combinedFiles);
+
+      alert("Employee Handbook Acknowlegement Form Completed Succesfully!");
+
+      //update the number of forms completed
+      const prev = JSON.parse(localStorage.getItem("completedForms") || "[]");
+      prev.push("Starsight- Employee Handbook Acknowlegement Form");
+      localStorage.setItem("completedForms", JSON.stringify(prev));
+
+      reset();
+      router.push("/");
     } catch (error) {
       console.error("Error:", error);
       alert("Failed to generate or send PDF");
@@ -134,7 +183,7 @@ export default function EmployeeAcknowlegement() {
                           {...register(info, {
                             required: `${info} is required`,
                           })}
-                          className="outline-none"
+                          className="outline-none w-full"
                           id={info}
                           type="text"
                         />
@@ -170,7 +219,7 @@ export default function EmployeeAcknowlegement() {
                             {...register(field, {
                               required: `${field} is required`,
                             })}
-                            className="outline-none"
+                            className="outline-none w-full"
                             id={field}
                             type={field === "date" ? "date" : "text"}
                           />

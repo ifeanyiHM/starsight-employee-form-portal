@@ -1,11 +1,16 @@
 "use client";
 import Image from "next/image";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import React, { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { CiCamera } from "react-icons/ci";
 import { FaCheck } from "react-icons/fa";
 import Footer from "../../components/Footer";
 import Header from "../../components/Header";
+import {
+  loadFilesFromLocalStorage,
+  saveFilesToLocalStorage,
+} from "../../utils/browserStorage";
 import { generatePDFFromSections } from "../../utils/pdfGenerator";
 
 export interface EmployeeFormDataProp {
@@ -61,6 +66,8 @@ export default function EmployeeData() {
     "OTHERS (SPECIFY)": null,
   });
 
+  const router = useRouter();
+
   const toggleAnswer = (row: IdRow, value: "yes" | "no") => {
     setAnswers((prev) => ({
       ...prev,
@@ -112,9 +119,6 @@ export default function EmployeeData() {
     handleSubmit,
     formState: { errors },
     reset,
-    // control,
-    // setValue,
-    // watch,
   } = methods;
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -124,6 +128,41 @@ export default function EmployeeData() {
     }
   };
 
+  // const onSubmit = async (data: EmployeeFormDataProp): Promise<void> => {
+  //   setLoading(true);
+
+  //   try {
+  //     // Generate PDF from the three sections
+  //     const sectionIds = ["section-1", "section-2"];
+  //     const pdf = await generatePDFFromSections(sectionIds);
+
+  //     // Convert PDF to blob
+  //     const pdfBlob = pdf.output("blob");
+
+  //     // Send to backend API for emailing
+  //     const formData = new FormData();
+  //     formData.append("file", pdfBlob, "form-data.pdf");
+  //     formData.append("email", `Employee Name: ${data.surname}`);
+
+  //     const response = await fetch("/api/send-pdf", {
+  //       method: "POST",
+  //       body: formData,
+  //     });
+
+  //     if (response.ok) {
+  //       alert("PDF sent successfully!");
+  //       // ✅ Clear all inputs including textareas
+  //       reset();
+  //     } else {
+  //       throw new Error("Failed to send email");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error:", error);
+  //     alert("Failed to generate or send PDF");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
   const onSubmit = async (data: EmployeeFormDataProp): Promise<void> => {
     setLoading(true);
 
@@ -137,21 +176,30 @@ export default function EmployeeData() {
 
       // Send to backend API for emailing
       const formData = new FormData();
-      formData.append("file", pdfBlob, "form-data.pdf");
+      formData.append("file", pdfBlob, "employee-data-form.pdf");
       formData.append("email", `Employee Name: ${data.surname}`);
 
-      const response = await fetch("/api/send-pdf", {
-        method: "POST",
-        body: formData,
+      const existingFiles = loadFilesFromLocalStorage();
+
+      // extract only the File objects
+      const combinedFiles: File[] = [...existingFiles];
+      formData.forEach((value) => {
+        if (value instanceof File) {
+          combinedFiles.push(value);
+        }
       });
 
-      if (response.ok) {
-        alert("PDF sent successfully!");
-        // ✅ Clear all inputs including textareas
-        reset();
-      } else {
-        throw new Error("Failed to send email");
-      }
+      await saveFilesToLocalStorage(combinedFiles);
+
+      alert("Employee Biodata Successfully Completed!");
+
+      //update the number of forms completed
+      const prev = JSON.parse(localStorage.getItem("completedForms") || "[]");
+      prev.push("Employee Data Form");
+      localStorage.setItem("completedForms", JSON.stringify(prev));
+
+      reset();
+      router.push("/");
     } catch (error) {
       console.error("Error:", error);
       alert("Failed to generate or send PDF");
@@ -243,14 +291,13 @@ export default function EmployeeData() {
                   {employeeFormFields.map((field, index) => {
                     if (index > 20) return null;
                     return (
-                      <>
+                      <React.Fragment key={index}>
                         <div
                           className={`${
                             [5, 6, 7, 8, 9, 10].includes(index)
                               ? "w-1/2 inline-flex"
                               : "flex"
                           } items-end py-2 gap-1`}
-                          key={index}
                         >
                           <label className="shrink-0 pl-2" htmlFor={field.id}>
                             <span className="title">
@@ -298,7 +345,7 @@ export default function EmployeeData() {
                             type="text"
                           />
                         )}
-                      </>
+                      </React.Fragment>
                     );
                   })}
                 </div>

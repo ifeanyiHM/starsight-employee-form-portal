@@ -1,11 +1,16 @@
 "use client";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { FaUpload } from "react-icons/fa";
 import { IoCloudUploadSharp } from "react-icons/io5";
 import Footer from "../../components/Footer";
 import Header from "../../components/Header";
+import {
+  loadFilesFromLocalStorage,
+  saveFilesToLocalStorage,
+} from "../../utils/browserStorage";
 import { generatePDFFromSections } from "../../utils/pdfGenerator";
 
 interface BackgroundCheckProps {
@@ -40,6 +45,8 @@ export default function BackgroundCheck() {
   const [degrees, setDegrees] = useState<string[]>(["Degree 1"]);
   const [certFiles, setCertFiles] = useState<(CertFile | null)[]>([null]);
 
+  const router = useRouter();
+
   const methods = useForm<BackgroundCheckProps>({
     defaultValues: {
       fullName: "",
@@ -65,21 +72,15 @@ export default function BackgroundCheck() {
     },
   });
 
-  // ✅ Destructure only what you need from methods
   const {
     register,
     handleSubmit,
     formState: { errors },
-    // reset,
-    // control,
-    // setValue,
-    // watch,
   } = methods;
-
-  // const selectedFile = watch("document");
 
   // const onSubmit = async (data: BackgroundCheckProps): Promise<void> => {
   //   setLoading(true);
+  //   console.log(certFiles);
 
   //   try {
   //     // Generate PDF from the three sections
@@ -92,7 +93,20 @@ export default function BackgroundCheck() {
   //     // Send to backend API for emailing
   //     const formData = new FormData();
   //     formData.append("file", pdfBlob, "form-data.pdf");
-  //     formData.append("email", `Customer Name: ${data.fullName}`);
+  //     formData.append("fullName", data.fullName);
+
+  //     // Append empoloyemt letter
+  //     if (uploadedEmploymentLetter) {
+  //       formData.append("attachment_1", uploadedEmploymentLetter);
+  //     }
+
+  //     // ✅ Append certificate files as well
+  //     certFiles.forEach((file, i) => {
+  //       if (file) {
+  //         // ✅ file is guaranteed to be a Blob (File) here
+  //         formData.append(`attachment_cert_${i + 1}`, file);
+  //       }
+  //     });
 
   //     const response = await fetch("/api/send-pdf", {
   //       method: "POST",
@@ -100,9 +114,9 @@ export default function BackgroundCheck() {
   //     });
 
   //     if (response.ok) {
-  //       alert("PDF sent successfully!");
-  //       // ✅ Clear all inputs including textareas
-  //       // reset();
+  //       alert("PDF and files sent successfully!");
+  //       setUploadedEmploymentLetter(null);
+  //       setCertFiles([]);
   //     } else {
   //       throw new Error("Failed to send email");
   //     }
@@ -113,6 +127,7 @@ export default function BackgroundCheck() {
   //     setLoading(false);
   //   }
   // };
+
   const onSubmit = async (data: BackgroundCheckProps): Promise<void> => {
     setLoading(true);
     console.log(certFiles);
@@ -125,10 +140,11 @@ export default function BackgroundCheck() {
       // Convert PDF to blob
       const pdfBlob = pdf.output("blob");
 
-      // Send to backend API for emailing
       const formData = new FormData();
-      formData.append("file", pdfBlob, "form-data.pdf");
+      formData.append("file", pdfBlob, "background-check-form.pdf");
       formData.append("fullName", data.fullName);
+
+      localStorage.setItem("employeeFullName", data.fullName);
 
       // Append empoloyemt letter
       if (uploadedEmploymentLetter) {
@@ -143,21 +159,30 @@ export default function BackgroundCheck() {
         }
       });
 
-      const response = await fetch("/api/send-pdf", {
-        method: "POST",
-        body: formData,
+      const existingFiles = loadFilesFromLocalStorage();
+
+      // extract only the File objects
+      const combinedFiles: File[] = [...existingFiles];
+      formData.forEach((value) => {
+        if (value instanceof File) {
+          combinedFiles.push(value);
+        }
       });
 
-      if (response.ok) {
-        alert("PDF and files sent successfully!");
-        setUploadedEmploymentLetter(null);
-        setCertFiles([]);
-      } else {
-        throw new Error("Failed to send email");
-      }
+      await saveFilesToLocalStorage(combinedFiles);
+
+      alert("Background Check Form Successfully Completed!");
+
+      //update the number of forms completed
+      const prev = JSON.parse(localStorage.getItem("completedForms") || "[]");
+      prev.push("Background Check Form");
+      localStorage.setItem("completedForms", JSON.stringify(prev));
+
+      setUploadedEmploymentLetter(null);
+      setCertFiles([]);
+      router.push("/");
     } catch (error) {
-      console.error("Error:", error);
-      alert("Failed to generate or send PDF");
+      console.error("Error storing files:", error);
     } finally {
       setLoading(false);
     }

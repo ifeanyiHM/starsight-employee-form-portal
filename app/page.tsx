@@ -1,130 +1,26 @@
-// "use client";
-
-// import { forms } from "@/data/forms";
-// import { slugify } from "@/utils/slugify";
-// import Link from "next/link";
-
-// export default function HomePage() {
-//   return (
-//     <main className="flex flex-col items-center justify-center min-h-screen bg-gray-50 px-4">
-//       <div className="max-w-2xl w-full text-center">
-//         <h1 className="text-3xl md:text-4xl font-bold mb-6 text-gray-800">
-//           Starsight Employee Forms
-//         </h1>
-//         <p className="text-gray-600 mb-8">
-//           Select a form below to get started:
-//         </p>
-
-//         <ul className="space-y-4">
-//           {forms.map((form, index) => (
-//             <li key={index}>
-//               <Link
-//                 href={
-//                   index === 2
-//                     ? "Old-Starsight-Employee-Handbook.pdf"
-//                     : `/${slugify(form)}`
-//                 }
-//                 className="block w-full bg-[#444343] hover:bg-[#333232] text-white text-lg py-3 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg"
-//               >
-//                 {form}
-//               </Link>
-//             </li>
-//           ))}
-//         </ul>
-//       </div>
-//     </main>
-//   );
-// }
-
-// "use client";
-
-// import { forms } from "@/data/forms";
-// import { slugify } from "@/utils/slugify";
-// import Link from "next/link";
-
-// export default function HomePage() {
-//   return (
-//     <main className="min-h-screen flex flex-col bg-gradient-to-b from-gray-50 to-gray-100">
-//       {/* Header */}
-//       <header className="w-full bg-white shadow-md">
-//         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-//           <h1 className="text-2xl font-bold text-gray-800">Starsight</h1>
-//           <nav>
-//             <ul className="flex space-x-6 text-gray-600 font-medium">
-//               <li>
-//                 <Link href="/">Home</Link>
-//               </li>
-//               <li>
-//                 <Link href="/about">About</Link>
-//               </li>
-//               <li>
-//                 <Link href="/contact">Contact</Link>
-//               </li>
-//             </ul>
-//           </nav>
-//         </div>
-//       </header>
-
-//       {/* Hero Section */}
-//       <section className="flex flex-col items-center text-center py-16 px-4">
-//         <h2 className="text-4xl font-extrabold text-gray-800 mb-4">
-//           Starsight Employee Forms
-//         </h2>
-//         <p className="text-lg text-gray-600 max-w-xl">
-//           Access and manage all your employee forms in one place. Select a form
-//           below to get started.
-//         </p>
-//       </section>
-
-//       {/* Forms List */}
-//       <section className="max-w-4xl mx-auto w-full px-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-//         {forms.map((form, index) => (
-//           <Link
-//             key={index}
-//             href={
-//               index === 2
-//                 ? "Old-Starsight-Employee-Handbook.pdf"
-//                 : `/${slugify(form)}`
-//             }
-//             className="bg-white p-6 rounded-xl shadow hover:shadow-lg border hover:border-gray-300 transition-all flex flex-col items-center text-center"
-//           >
-//             <span className="text-xl font-semibold text-gray-800 mb-2">
-//               {form}
-//             </span>
-//             <p className="text-sm text-gray-500">
-//               {index === 2
-//                 ? "Download the employee handbook"
-//                 : "Fill and submit this form online"}
-//             </p>
-//           </Link>
-//         ))}
-//       </section>
-
-//       {/* Footer */}
-//       <footer className="mt-auto bg-white border-t py-6">
-//         <div className="max-w-6xl mx-auto px-6 flex justify-between items-center text-sm text-gray-500">
-//           <p>© {new Date().getFullYear()} Starsight. All rights reserved.</p>
-//           <p>Built with Next.js & Tailwind CSS</p>
-//         </div>
-//       </footer>
-//     </main>
-//   );
-// }
-
 "use client";
 
 import { documents, forms } from "@/data/forms";
 import { slugify } from "@/utils/slugify";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import ListDetails from "../components/ListDetails";
 import useForm from "../context/useForm";
+import { loadFilesFromLocalStorage } from "../utils/browserStorage";
 
 export default function HomePage() {
   const { searchTerm } = useForm();
 
   const [activeCategory, setActiveCategory] = useState("all");
+  const [loading, setLoading] = useState(false);
+  const [completedForms, setCompletedForms] = useState<string[]>([]);
+
+  useEffect(() => {
+    // This runs only in the browser
+    const stored = localStorage.getItem("completedForms");
+    setCompletedForms(stored ? JSON.parse(stored) : []);
+  }, []);
 
   // Filter forms based on search and category
   const filteredForms = forms.filter((form) => {
@@ -144,6 +40,79 @@ export default function HomePage() {
     { id: "it", name: "IT Services" },
     { id: "finance", name: "Finance" },
   ];
+
+  // const finalSubmit = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const allFiles = loadFilesFromLocalStorage();
+  //     const formData = new FormData();
+  //     allFiles.forEach((file, i) => {
+  //       formData.append(`attachment_${i + 1}`, file);
+  //     });
+
+  //     const res = await fetch("/api/send-pdf", {
+  //       method: "POST",
+  //       body: formData,
+  //     });
+
+  //     if (res.ok) {
+  //       alert("All files successfully uploaded!");
+  //       localStorage.removeItem("storedFiles");
+  //     } else {
+  //       throw new Error("Failed to send email");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error:", error);
+  //     alert("Failed to generate or send PDF");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+  const finalSubmit = async () => {
+    setLoading(true);
+    try {
+      const allFiles = loadFilesFromLocalStorage(); // must return real File/Blob objects
+
+      const formData = new FormData();
+
+      // 1️⃣ Find the PDF in the array
+      const pdfFile = allFiles.find((f) => f.type === "application/pdf");
+      if (pdfFile) {
+        // append with the key the server expects
+        formData.append("file", pdfFile, pdfFile.name || "form-data.pdf");
+      }
+
+      // 2️⃣ Add the rest of the files
+      allFiles.forEach((file, i) => {
+        // skip the one we already added as "file"
+        if (file !== pdfFile) {
+          formData.append(`attachment_${i + 1}`, file);
+        }
+      });
+
+      // ➡️ Get full name from localStorage and append it
+      const fullName = localStorage.getItem("employeeFullName") || "";
+      formData.append("fullName", fullName);
+
+      const res = await fetch("/api/send-pdf", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (res.ok) {
+        alert("All files successfully uploaded!");
+        localStorage.removeItem("storedFiles");
+        localStorage.removeItem("completedForms");
+      } else {
+        throw new Error("Failed to send email");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Failed to generate or send PDF");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -199,7 +168,13 @@ export default function HomePage() {
                       </dt>
                       <dd>
                         <div className="text-lg font-medium text-gray-900">
-                          {forms.length}
+                          {form === "Completed Forms"
+                            ? completedForms.length
+                            : form === "Not Completed Forms"
+                            ? forms.length - completedForms.length
+                            : form === "Reference Documents"
+                            ? 2
+                            : forms.length}
                         </div>
                       </dd>
                     </dl>
@@ -253,6 +228,39 @@ export default function HomePage() {
             ))}
           </ul>
         </div>
+
+        {completedForms.length === forms.length && (
+          <div className="flex justify-between items-center mt-4 px-2">
+            <p className="text-sm text-gray-700">
+              All forms have been successfully completed. Proceed to sumbit to
+              the HR department.
+            </p>
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={loading}
+              onClick={finalSubmit}
+              className="w-auto py-2 px-5 text-white rounded-full transition-all font-medium cursor-pointer"
+              style={{
+                backgroundColor: "#333232",
+              }}
+              onMouseOver={(e) => {
+                if (!loading) {
+                  (e.target as HTMLButtonElement).style.backgroundColor =
+                    "#444343";
+                }
+              }}
+              onMouseOut={(e) => {
+                if (!loading) {
+                  (e.target as HTMLButtonElement).style.backgroundColor =
+                    "#333232";
+                }
+              }}
+            >
+              {loading ? "Submitting..." : "Submit"}
+            </button>
+          </div>
+        )}
 
         {/* Empty state */}
         {filteredForms.length === 0 && (

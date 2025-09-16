@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 interface ListDetailsProps {
   title: string;
@@ -7,24 +8,70 @@ interface ListDetailsProps {
 }
 
 function ListDetails({ title, subtitle, linkTitle }: ListDetailsProps) {
+  const [completedForms, setCompletedForms] = useState<string[]>([]);
+
+  useEffect(() => {
+    // This runs only in the browser
+    const stored = localStorage.getItem("completedForms");
+    setCompletedForms(stored ? JSON.parse(stored) : []);
+  }, []);
+
   return (
     <>
       <li>
-        <Link href={linkTitle} className="block group">
-          <div className="px-4 py-4 flex items-center sm:px-6">
+        <Link
+          href={linkTitle}
+          className={`block group ${
+            completedForms.includes(title) ? "pointer-events-none" : ""
+          }`}
+        >
+          <div
+            className={`${
+              completedForms.includes(title) && ""
+            } px-4 py-4 flex items-center sm:px-6`}
+          >
             <div className="min-w-0 flex-1 sm:flex sm:items-center sm:justify-between">
               <div className="truncate">
                 <div className="flex text-sm">
-                  <p className="font-medium text-gray-900 group-hover:text-green-600 truncate">
+                  <p
+                    className={`${
+                      completedForms.includes(title)
+                        ? "line-through opacity-50"
+                        : "group-hover:text-green-600"
+                    } font-medium text-gray-900 truncate`}
+                  >
                     {title}
                   </p>
                 </div>
                 <div className="mt-2 flex">
-                  <div className="flex items-center text-sm text-gray-500">
-                    <p>{subtitle}</p>
+                  <div
+                    className={`${
+                      completedForms.includes(title) && "opacity-50"
+                    } flex items-center text-sm text-gray-500`}
+                  >
+                    <p>
+                      {completedForms.includes(title)
+                        ? "This form has been completed"
+                        : subtitle}
+                    </p>
                   </div>
                 </div>
               </div>
+              {completedForms.includes(title) && (
+                <span
+                  className="
+                inline-flex items-center justify-center
+                w-6 h-6 p-3.5
+                rounded-full
+                bg-green-600
+                text-white
+                text-lg
+                font-bold
+                "
+                >
+                  ✓
+                </span>
+              )}
             </div>
             <div className="ml-5 flex-shrink-0">
               <svg
