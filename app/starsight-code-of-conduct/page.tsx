@@ -4,56 +4,14 @@ import Link from "next/link";
 import { MdOutlineLocalPrintshop } from "react-icons/md";
 import Footer from "../../components/Footer";
 import Header from "../../components/Header";
-// import { useState } from "react";
-
-// export interface EmployeeFormDataProp {}
 
 export default function CodeOfConduct() {
-  // const [loading, setLoading] = useState(false);
-
-  // const onSubmit = async (data: EmployeeFormDataProp): Promise<void> => {
-  //   setLoading(true);
-
-  //   try {
-  //     // Generate PDF from the three sections
-  //     const sectionIds = ["section-1", "section-2", "section-3"];
-  //     const pdf = await generatePDFFromSections(sectionIds);
-
-  //     // Convert PDF to blob
-  //     const pdfBlob = pdf.output("blob");
-
-  //     // Send to backend API for emailing
-  //     const formData = new FormData();
-  //     formData.append("file", pdfBlob, "form-data.pdf");
-  //     formData.append("email", `Customer Name: `);
-
-  //     const response = await fetch("/api/send-pdf", {
-  //       method: "POST",
-  //       body: formData,
-  //     });
-
-  //     if (response.ok) {
-  //       alert("PDF sent successfully!");
-  //       // ✅ Clear all inputs including textareas
-  //       reset();
-  //     } else {
-  //       throw new Error("Failed to send email");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error:", error);
-  //     alert("Failed to generate or send PDF");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   return (
     <>
       <Header />
       <div
         className="flex items-center justify-center min-h-screen p-6"
         style={{ backgroundColor: "#f1f5f9" }}
-        // style={{ backgroundColor: "#000" }}
       >
         <div className="w-full max-w-3xl flex flex-col gap-8">
           <section

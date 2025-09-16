@@ -43,42 +43,6 @@ export default function EmployeeAcknowlegement() {
     reset,
   } = methods;
 
-  // const onSubmit = async (data: EmployeeAcknowlegementProp): Promise<void> => {
-  //   setLoading(true);
-
-  //   try {
-  //     // Generate PDF from the three sections
-  //     const sectionIds = ["section-1", "section-2", "section-3"];
-  //     const pdf = await generatePDFFromSections(sectionIds);
-
-  //     // Convert PDF to blob
-  //     const pdfBlob = pdf.output("blob");
-
-  //     // Send to backend API for emailing
-  //     const formData = new FormData();
-  //     formData.append("file", pdfBlob, "form-data.pdf");
-  //     formData.append("email", `Employee Name: ${data.Name}`);
-
-  //     const response = await fetch("/api/send-pdf", {
-  //       method: "POST",
-  //       body: formData,
-  //     });
-
-  //     if (response.ok) {
-  //       alert("PDF sent successfully!");
-  //       // ✅ Clear all inputs including textareas
-  //       reset();
-  //     } else {
-  //       throw new Error("Failed to send email");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error:", error);
-  //     alert("Failed to generate or send PDF");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   const onSubmit = async (data: EmployeeAcknowlegementProp): Promise<void> => {
     setLoading(true);
 
@@ -130,15 +94,12 @@ export default function EmployeeAcknowlegement() {
       <div
         className="flex items-center justify-center min-h-screen p-6"
         style={{ backgroundColor: "#f1f5f9" }}
-        // style={{ backgroundColor: "#000" }}
       >
         <FormProvider {...methods}>
           <form
             id="form-container"
             onSubmit={handleSubmit(onSubmit)}
             className="w-full max-w-3xl flex flex-col gap-8"
-
-            // ref={formRef}
           >
             <section
               id="section-1"

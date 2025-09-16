@@ -78,56 +78,6 @@ export default function BackgroundCheck() {
     formState: { errors },
   } = methods;
 
-  // const onSubmit = async (data: BackgroundCheckProps): Promise<void> => {
-  //   setLoading(true);
-  //   console.log(certFiles);
-
-  //   try {
-  //     // Generate PDF from the three sections
-  //     const sectionIds = ["section-1"];
-  //     const pdf = await generatePDFFromSections(sectionIds);
-
-  //     // Convert PDF to blob
-  //     const pdfBlob = pdf.output("blob");
-
-  //     // Send to backend API for emailing
-  //     const formData = new FormData();
-  //     formData.append("file", pdfBlob, "form-data.pdf");
-  //     formData.append("fullName", data.fullName);
-
-  //     // Append empoloyemt letter
-  //     if (uploadedEmploymentLetter) {
-  //       formData.append("attachment_1", uploadedEmploymentLetter);
-  //     }
-
-  //     // ✅ Append certificate files as well
-  //     certFiles.forEach((file, i) => {
-  //       if (file) {
-  //         // ✅ file is guaranteed to be a Blob (File) here
-  //         formData.append(`attachment_cert_${i + 1}`, file);
-  //       }
-  //     });
-
-  //     const response = await fetch("/api/send-pdf", {
-  //       method: "POST",
-  //       body: formData,
-  //     });
-
-  //     if (response.ok) {
-  //       alert("PDF and files sent successfully!");
-  //       setUploadedEmploymentLetter(null);
-  //       setCertFiles([]);
-  //     } else {
-  //       throw new Error("Failed to send email");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error:", error);
-  //     alert("Failed to generate or send PDF");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   const onSubmit = async (data: BackgroundCheckProps): Promise<void> => {
     setLoading(true);
     console.log(certFiles);
@@ -280,8 +230,6 @@ export default function BackgroundCheck() {
             id="form-container"
             onSubmit={handleSubmit(onSubmit)}
             className="w-full max-w-3xl flex flex-col gap-8"
-
-            // ref={formRef}
           >
             <section
               id="section-1"

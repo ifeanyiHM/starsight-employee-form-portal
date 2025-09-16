@@ -128,41 +128,6 @@ export default function EmployeeData() {
     }
   };
 
-  // const onSubmit = async (data: EmployeeFormDataProp): Promise<void> => {
-  //   setLoading(true);
-
-  //   try {
-  //     // Generate PDF from the three sections
-  //     const sectionIds = ["section-1", "section-2"];
-  //     const pdf = await generatePDFFromSections(sectionIds);
-
-  //     // Convert PDF to blob
-  //     const pdfBlob = pdf.output("blob");
-
-  //     // Send to backend API for emailing
-  //     const formData = new FormData();
-  //     formData.append("file", pdfBlob, "form-data.pdf");
-  //     formData.append("email", `Employee Name: ${data.surname}`);
-
-  //     const response = await fetch("/api/send-pdf", {
-  //       method: "POST",
-  //       body: formData,
-  //     });
-
-  //     if (response.ok) {
-  //       alert("PDF sent successfully!");
-  //       // ✅ Clear all inputs including textareas
-  //       reset();
-  //     } else {
-  //       throw new Error("Failed to send email");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error:", error);
-  //     alert("Failed to generate or send PDF");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
   const onSubmit = async (data: EmployeeFormDataProp): Promise<void> => {
     setLoading(true);
 
@@ -261,8 +226,6 @@ export default function EmployeeData() {
             id="form-container"
             onSubmit={handleSubmit(onSubmit)}
             className="w-full max-w-3xl flex flex-col gap-8"
-
-            // ref={formRef}
           >
             <section
               id="section-1"
@@ -275,7 +238,7 @@ export default function EmployeeData() {
             >
               <div className="flex justify-center m-0">
                 <Image
-                  src="/starsight-empData-logo.png"
+                  src="/starsight-empdata-logo.png"
                   alt="starsight logo"
                   width="186"
                   height="64"
