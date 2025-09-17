@@ -6,17 +6,23 @@ import Footer from "../../components/Footer";
 import Header from "../../components/Header";
 
 export default function CodeOfConduct() {
+  function checkDownload() {
+    //update the number of forms completed
+    const prev = JSON.parse(localStorage.getItem("completedForms") || "[]");
+    prev.push("Starsight- Code of Conduct");
+    localStorage.setItem("completedForms", JSON.stringify(prev));
+  }
   return (
     <>
       <Header />
       <div
-        className="flex items-center justify-center min-h-screen p-6"
+        className="flex items-center justify-center min-h-screen md:p-6"
         style={{ backgroundColor: "#f1f5f9" }}
       >
         <div className="w-full max-w-3xl flex flex-col gap-8">
           <section
             id="section-1"
-            className="relative w-full py-20 border"
+            className="relative w-full py-10 md:py-20 border"
             style={{
               backgroundColor: "#ffffff",
               boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
@@ -34,7 +40,7 @@ export default function CodeOfConduct() {
             <h1 className="mt-8 text-[0.9rem] font-bold text-center uppercase">
               CODE OF CONDUCT
             </h1>
-            <div className="text-sm font-medium px-20 space-y-6 text-justify">
+            <div className="text-sm font-medium px-4 md:px-20 space-y-6 text-justify">
               <div>
                 <p>
                   Starsight considers you a valued employee and as such you are
@@ -133,14 +139,14 @@ export default function CodeOfConduct() {
           </section>
           <section
             id="section-1"
-            className="relative w-full py-20 border"
+            className="relative w-full py-10 md:py-20 border"
             style={{
               backgroundColor: "#ffffff",
               boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
               borderColor: "#e5e7eb",
             }}
           >
-            <div className="text-sm font-medium px-20 space-y-6 text-justify">
+            <div className="text-sm font-medium px-4 md:px-20 space-y-6 text-justify">
               <div>
                 <h2 className="font-bold">Personal Appearance & Hygiene</h2>
                 <p>
@@ -229,14 +235,14 @@ export default function CodeOfConduct() {
           </section>
           <section
             id="section-1"
-            className="relative w-full py-20 border"
+            className="relative w-full py-10 md:py-20 border"
             style={{
               backgroundColor: "#ffffff",
               boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
               borderColor: "#e5e7eb",
             }}
           >
-            <div className="text-sm font-medium px-20 space-y-6 text-justify">
+            <div className="text-sm font-medium px-4 md:px-20 space-y-6 text-justify">
               <div>
                 <p>
                   Starsight will not tolerate direct or indirect discrimination
@@ -334,14 +340,14 @@ export default function CodeOfConduct() {
           </section>
           <section
             id="section-1"
-            className="relative w-full py-20 border"
+            className="relative w-full py-10 md:py-20 border"
             style={{
               backgroundColor: "#ffffff",
               boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
               borderColor: "#e5e7eb",
             }}
           >
-            <div className="text-sm font-medium px-20 space-y-6 text-justify">
+            <div className="text-sm font-medium px-4 md:px-20 space-y-6 text-justify">
               <div>
                 <div className="relative ml-10 mt-1">
                   <div className="w-1.5 h-1.5 rounded-full bg-black absolute -left-6 top-1.5"></div>
@@ -456,14 +462,14 @@ export default function CodeOfConduct() {
           </section>
           <section
             id="section-1"
-            className="relative w-full py-20 border"
+            className="relative w-full py-10 md:py-20 border"
             style={{
               backgroundColor: "#ffffff",
               boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
               borderColor: "#e5e7eb",
             }}
           >
-            <div className="text-sm font-medium px-20 space-y-6 text-justify">
+            <div className="text-sm font-medium px-4 md:px-20 space-y-6 text-justify">
               <div>
                 <p>
                   which case unless the employee is found guilty will ‘without
@@ -519,7 +525,7 @@ export default function CodeOfConduct() {
                 </p>
               </div>
 
-              <div className="w-full mb-64 flex items-center justify-between gap-16 text-[14px] font-medium">
+              <div className="w-1/2 md:w-full mb-64 flex flex-col md:flex-row md:items-center md:justify-between gap-8 md:gap-16 text-[14px] font-medium">
                 {["Staff Name", "Signature", "Date"].map((field, index) => (
                   <div className="py-2 flex flex-col space-y-2" key={index}>
                     <input
@@ -536,7 +542,7 @@ export default function CodeOfConduct() {
             </div>
           </section>
           <button
-            className="w-full py-3 text-white rounded-lg transition-all font-bold uppercase mb-10"
+            className="w-[90%] mx-auto md:w-full py-3 text-white rounded-lg transition-all font-bold uppercase mb-10"
             style={{
               backgroundColor: "#333232",
             }}
@@ -544,6 +550,7 @@ export default function CodeOfConduct() {
             <Link
               href="Starsight-Code-of-Conduct.pdf"
               className="flex items-center gap-2 justify-center"
+              onClick={checkDownload}
             >
               <MdOutlineLocalPrintshop size={20} /> Download
             </Link>

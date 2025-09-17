@@ -15,6 +15,7 @@ export default function HomePage() {
   const [activeCategory, setActiveCategory] = useState("all");
   const [loading, setLoading] = useState(false);
   const [completedForms, setCompletedForms] = useState<string[]>([]);
+  const [remountKey, setRemountKey] = useState(0);
 
   useEffect(() => {
     // This runs only in the browser
@@ -36,42 +37,39 @@ export default function HomePage() {
 
   const categories = [
     { id: "all", name: "All Forms" },
-    { id: "hr", name: "Human Resources" },
-    { id: "it", name: "IT Services" },
-    { id: "finance", name: "Finance" },
+    // { id: "hr", name: "Human Resources" },
+    // { id: "it", name: "IT Services" },
+    // { id: "finance", name: "Finance" },
   ];
 
-  // const finalSubmit = async () => {
-  //   setLoading(true);
-  //   try {
-  //     const allFiles = loadFilesFromLocalStorage();
-  //     const formData = new FormData();
-  //     allFiles.forEach((file, i) => {
-  //       formData.append(`attachment_${i + 1}`, file);
-  //     });
+  function checkDownload(): void {
+    const prev = JSON.parse(localStorage.getItem("completedForms") || "[]");
+    prev.push("Old Starsight- Employee Handbook");
+    localStorage.setItem("completedForms", JSON.stringify(prev));
+  }
 
-  //     const res = await fetch("/api/send-pdf", {
-  //       method: "POST",
-  //       body: formData,
-  //     });
+  const required = [
+    "Background Check Form",
+    "Employee Data Form",
+    "Starsight- Employee Handbook Acknowlegement Form",
+  ];
 
-  //     if (res.ok) {
-  //       alert("All files successfully uploaded!");
-  //       localStorage.removeItem("storedFiles");
-  //     } else {
-  //       throw new Error("Failed to send email");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error:", error);
-  //     alert("Failed to generate or send PDF");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+  const hasMatch = required.every((r) => completedForms.includes(r));
+  function countRequiredCompleted(completedForms: string[]): number {
+    const matched = required.filter((req) =>
+      completedForms.includes(req)
+    ).length;
+
+    return matched;
+  }
+  const completedCount = countRequiredCompleted(completedForms);
+
+  console.log(completedForms, completedForms.length, hasMatch);
+
   const finalSubmit = async () => {
     setLoading(true);
     try {
-      const allFiles = loadFilesFromLocalStorage(); // must return real File/Blob objects
+      const allFiles = loadFilesFromLocalStorage();
 
       const formData = new FormData();
 
@@ -100,9 +98,10 @@ export default function HomePage() {
       });
 
       if (res.ok) {
-        alert("All files successfully uploaded!");
         localStorage.removeItem("storedFiles");
         localStorage.removeItem("completedForms");
+        alert("All files successfully uploaded!");
+        setRemountKey((k) => k + 1);
       } else {
         throw new Error("Failed to send email");
       }
@@ -115,7 +114,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div key={remountKey} className="min-h-screen bg-gray-50">
       {/* Header */}
 
       <Header />
@@ -169,9 +168,9 @@ export default function HomePage() {
                       <dd>
                         <div className="text-lg font-medium text-gray-900">
                           {form === "Completed Forms"
-                            ? completedForms.length
+                            ? completedCount
                             : form === "Not Completed Forms"
-                            ? forms.length - completedForms.length
+                            ? forms.length - completedCount
                             : form === "Reference Documents"
                             ? 2
                             : forms.length}
@@ -223,13 +222,21 @@ export default function HomePage() {
                 key={index}
                 title={form}
                 subtitle="Fill and submit this form online"
+                substitute="This form has been completed"
                 linkTitle={`/${slugify(form)}`}
               />
             ))}
           </ul>
         </div>
 
-        {completedForms.length === forms.length && (
+        {hasMatch && completedForms.length < 5 ? (
+          <div className="flex justify-between items-center mt-4 px-2">
+            <p className="text-sm text-gray-700">
+              To proceed, All reference documents must be downloaded before the
+              Submit button is activated.
+            </p>
+          </div>
+        ) : completedForms.length === 5 ? (
           <div className="flex justify-between items-center mt-4 px-2">
             <p className="text-sm text-gray-700">
               All forms have been successfully completed. Proceed to sumbit to
@@ -260,6 +267,8 @@ export default function HomePage() {
               {loading ? "Submitting..." : "Submit"}
             </button>
           </div>
+        ) : (
+          ""
         )}
 
         {/* Empty state */}
@@ -304,11 +313,13 @@ export default function HomePage() {
                   key={index}
                   title={form.title}
                   subtitle={form.subtitle}
+                  substitute="Document downloaded"
                   linkTitle={
                     index === 0
                       ? "Old-Starsight-Employee-Handbook.pdf"
                       : `/${slugify(form.title)}`
                   }
+                  checkDownload={index === 0 ? checkDownload : undefined}
                 />
               ))}
             </ul>

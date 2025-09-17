@@ -24,9 +24,9 @@ function Header() {
             </Link>
           </div>
 
-          <div className="flex items-center">
+          <div className="flex items-center justify-end">
             {/* Search */}
-            <div className="relative mr-4">
+            <div className="relative w-[70%] md:w-full">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <svg
                   className="h-5 w-5 text-gray-400"

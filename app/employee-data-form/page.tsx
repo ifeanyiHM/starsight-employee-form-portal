@@ -3,10 +3,12 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
+import useFormPersist from "react-hook-form-persist";
 import { CiCamera } from "react-icons/ci";
 import { FaCheck } from "react-icons/fa";
 import Footer from "../../components/Footer";
 import Header from "../../components/Header";
+import { useIsSmallScreen } from "../../hooks/useIsSmallScreen";
 import {
   loadFilesFromLocalStorage,
   saveFilesToLocalStorage,
@@ -66,6 +68,8 @@ export default function EmployeeData() {
     "OTHERS (SPECIFY)": null,
   });
 
+  const isSmall = useIsSmallScreen();
+
   const router = useRouter();
 
   const toggleAnswer = (row: IdRow, value: "yes" | "no") => {
@@ -119,7 +123,11 @@ export default function EmployeeData() {
     handleSubmit,
     formState: { errors },
     reset,
+    setValue,
+    watch,
   } = methods;
+
+  useFormPersist("employeeDataForm", { watch, setValue });
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -217,9 +225,8 @@ export default function EmployeeData() {
     <>
       <Header />
       <div
-        className="flex items-center justify-center min-h-screen p-6"
+        className="flex items-center justify-center min-h-screen lg:p-6"
         style={{ backgroundColor: "#f1f5f9" }}
-        // style={{ backgroundColor: "#000" }}
       >
         <FormProvider {...methods}>
           <form
@@ -229,7 +236,7 @@ export default function EmployeeData() {
           >
             <section
               id="section-1"
-              className="relative w-full py-8 pl-8 border"
+              className="relative w-full py-4 md:py-8 px-4 md:pl-8 md:pr-0 border"
               style={{
                 backgroundColor: "#ffffff",
                 boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
@@ -248,75 +255,8 @@ export default function EmployeeData() {
                 EMPLOYEE PERSONAL DATA FORM
               </h1>
 
-              <div className="pr-40">
-                <h2 className="font-bold uppercase text-[14px]">SECTION A</h2>
-                <div className="text-[14px] font-medium pl-2">
-                  {employeeFormFields.map((field, index) => {
-                    if (index > 20) return null;
-                    return (
-                      <React.Fragment key={index}>
-                        <div
-                          className={`${
-                            [5, 6, 7, 8, 9, 10].includes(index)
-                              ? "w-1/2 inline-flex"
-                              : "flex"
-                          } items-end py-2 gap-1`}
-                        >
-                          <label className="shrink-0 pl-2" htmlFor={field.id}>
-                            <span className="title">
-                              <span className="pr-2">
-                                {[6, 8, 10].includes(index)
-                                  ? ""
-                                  : index === 7
-                                  ? "7."
-                                  : index === 9
-                                  ? "8."
-                                  : index > 10
-                                  ? `${index - 2}.`
-                                  : `${index + 1}.`}
-                              </span>{" "}
-                              {field.title} :
-                            </span>
-                          </label>
-
-                          <div className="w-full pl-2 border-b-2 border-dotted border-black -translate-y-1.5">
-                            <input
-                              {...register(field.id, {
-                                required: `{${field.title} is required}`,
-                              })}
-                              className="w-full outline-none"
-                              id={field.id}
-                              type={
-                                field.id.startsWith("date")
-                                  ? "date"
-                                  : field.id.startsWith("number")
-                                  ? "number"
-                                  : "text"
-                              }
-                            />
-                            {errors[field.id] && (
-                              <p className="text-red-500 text-xs mt-1">
-                                {errors[field.id]?.message}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                        {[11, 12, 13, 14, 19].includes(index) && (
-                          <input
-                            className="w-[calc(100%-2rem)] outline-none ml-8 utline-none pl-2 border-b-2 border-dotted border-black -translate-y-1.5"
-                            id={field.id}
-                            type="text"
-                          />
-                        )}
-                      </React.Fragment>
-                    );
-                  })}
-                </div>
-              </div>
-              <div className="text-center mt-32 mb-16">1</div>
-
-              <div className="absolute top-15 right-1">
-                <div className="w-[148px] h-[164px] border-2 bg-[#4472c4] border-[#192f56] flex flex-col items-center justify-center overflow-hidden relative">
+              <div className="md:absolute mt-2 md:mt-0 top-15 right-1 flex justify-end">
+                <div className="w-[120px] md:w-[148px] h-[130px] md:h-[164px] border-2 bg-[#4472c4] border-[#192f56] flex flex-col items-center justify-center overflow-hidden relative">
                   {preview ? (
                     <Image
                       src={preview}
@@ -341,26 +281,103 @@ export default function EmployeeData() {
                   />
                 </div>
               </div>
+
+              <div className="md:pr-40">
+                <h2 className="font-bold uppercase text-[14px]">SECTION A</h2>
+                <div className="text-[14px] font-medium md:pl-2">
+                  {employeeFormFields.map((field, index) => {
+                    if (index > 20) return null;
+                    return (
+                      <React.Fragment key={index}>
+                        <div
+                          className={`${
+                            [5, 6, 7, 8, 9, 10].includes(index)
+                              ? "md:w-1/2 md:inline-flex flex"
+                              : "flex"
+                          } items-end py-2 gap-1`}
+                        >
+                          <label className="shrink-0 pl-2" htmlFor={field.id}>
+                            <span className="title">
+                              <span className="pr-2">
+                                {[6, 8, 10].includes(index) && !isSmall
+                                  ? ""
+                                  : index === 7 && !isSmall
+                                  ? "7."
+                                  : index === 9 && !isSmall
+                                  ? "8."
+                                  : index > 10 && !isSmall
+                                  ? `${index - 2}.`
+                                  : `${index + 1}.`}
+                              </span>{" "}
+                              {field.title} :
+                            </span>
+                          </label>
+
+                          <div
+                            className={`${
+                              [11, 12, 13, 14, 19].includes(index)
+                                ? "border-b-0 md:border-b-2"
+                                : "border-b-2"
+                            } relative w-full pl-2 border-dotted border-black -translate-y-1.5`}
+                          >
+                            <input
+                              {...register(field.id, {
+                                required: `${field.title} is required`,
+                              })}
+                              className={`${
+                                [11, 12, 13, 14, 19].includes(index)
+                                  ? "hidden md:inline"
+                                  : ""
+                              } w-full outline-none`}
+                              id={field.id}
+                              type={
+                                field.id.startsWith("date")
+                                  ? "date"
+                                  : field.id.startsWith("number")
+                                  ? "number"
+                                  : "text"
+                              }
+                            />
+                            {errors[field.id] && (
+                              <p className="absolute left-2 -bottom-4.5 text-red-500 text-xs mt-1">
+                                {errors[field.id]?.message}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                        {[11, 12, 13, 14, 19].includes(index) && (
+                          <input
+                            className="w-[calc(100%-2rem)] outline-none ml-8 utline-none pl-2 border-b-2 border-dotted border-black -translate-y-1.5"
+                            id={field.id}
+                            type="text"
+                          />
+                        )}
+                      </React.Fragment>
+                    );
+                  })}
+                </div>
+              </div>
+              <div className="text-center mt-32 mb-16">1</div>
             </section>
             <section
               id="section-2"
-              className="w-full py-8 pl-8 border"
+              className="w-full py-4 md:py-8 px-4 md:pl-8 md:pr-0 border"
               style={{
                 backgroundColor: "#ffffff",
                 boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
                 borderColor: "#e5e7eb",
               }}
             >
-              <div className="pr-40 space-y-6">
+              <div className="md:pr-40 space-y-6">
                 <div>
-                  <div className="text-[14px] font-medium pl-2">
+                  <div className="text-[14px] font-medium md:pl-2">
                     {employeeFormFields.map((field, index) => {
                       if (index < 21) return null;
                       return (
                         <div
                           className={`${
                             [22, 23].includes(index)
-                              ? "w-1/2 inline-flex"
+                              ? "md:w-1/2 md:inline-flex flex"
                               : "flex"
                           } items-end py-2 gap-1`}
                           key={index}
@@ -374,16 +391,20 @@ export default function EmployeeData() {
                             <span className="title">
                               <span className="pr-2">
                                 {" "}
-                                {index === 21
+                                {index === 21 && !isSmall
                                   ? "19."
-                                  : index === 22
+                                  : index === 22 && !isSmall
                                   ? "20."
-                                  : index === 24
+                                  : index === 24 && !isSmall
                                   ? "21."
-                                  : index === 25
+                                  : index === 25 && !isSmall
                                   ? "22."
-                                  : index === 26
+                                  : index === 26 && !isSmall
                                   ? "23."
+                                  : index === 27
+                                  ? ""
+                                  : isSmall
+                                  ? `${index + 1}.`
                                   : ""}
                               </span>{" "}
                               {field.title} :
@@ -391,7 +412,7 @@ export default function EmployeeData() {
                           </label>
 
                           {index === 26 ? (
-                            <div className="ml-8 flex items-center space-x-8">
+                            <div className="ml-4 md:ml-8 flex items-center space-x-4 md:space-x-8">
                               {["Yes", "No"].map((opt) => {
                                 const isSelected = selected === opt;
                                 return (
@@ -403,7 +424,7 @@ export default function EmployeeData() {
                                     {" "}
                                     <span className="title">{opt}</span>
                                     <div
-                                      className={`w-6 h-6 flex items-center justify-center border rounded transition-colors
+                                      className={`w-4 md:w-6 h-4 md:h-6 flex items-center justify-center border rounded transition-colors
                                     ${
                                       isSelected
                                         ? "bg-green-600 border-green-600"
@@ -421,9 +442,7 @@ export default function EmployeeData() {
                           ) : (
                             <div className="w-full pl-2 border-b-2 border-dotted border-black -translate-y-1.5">
                               <input
-                                {...register(field.id, {
-                                  required: "Customer's Name is required",
-                                })}
+                                {...register(field.id)}
                                 className="w-full outline-none"
                                 id={field.id}
                                 type="text"
@@ -445,22 +464,21 @@ export default function EmployeeData() {
                   <p className="font-bold uppercase text-[14px]">
                     EMPLOYMENT STATUS (TICK AS APPROPRAITE)
                   </p>
-                  {/* <span className="border px-1 text-xl">✓</span> */}
 
-                  <div className="mt-2 flex items-center space-x-8">
+                  <div className="mt-2 flex items-center space-x-4 md:space-x-8">
                     {["FULL TIME", "PART TIME", "TEMPORARY"].map((opt) => {
                       const isSelected = selectedStatus === opt;
                       return (
                         <label
                           key={opt}
-                          className="flex text-sm font-medium items-center gap-2 cursor-pointer"
+                          className="flex text-xs md:text-sm font-medium items-center gap-2 cursor-pointer"
                           onClick={() => setSelectedStatus(opt)}
                         >
                           {" "}
                           <span className="block w-1.5 h-1.5 bg-black rounded-full ml-1.5"></span>{" "}
                           <span className="title">{opt}</span>
                           <div
-                            className={`w-6 h-6 flex items-center justify-center border rounded transition-colors
+                            className={`w-4 md:w-6 h-4 md:h-6 flex items-center justify-center border rounded transition-colors
                           ${
                             isSelected
                               ? "bg-green-600 border-green-600"
@@ -553,63 +571,21 @@ export default function EmployeeData() {
                     ))}
                   </div>
                 </div>
-                {/* <div className="border border-black border-b-0 text-sm font-medium">
-                <div className="font-bold flex w-full border-b border-black">
-                  <p className="border-r border-black w-[40%] py-1.5 pl-2">
-                    <span className="title">MEANS OF IDENTIFICATION</span>
-                  </p>
-                  <p className="w-[10%] text-center py-1.5 border-r border-black ">
-                    <span className="title">YES</span>
-                  </p>
-                  <p className="w-[10%] text-center py-1.5 border-r border-black">
-                    <span className="title">NO</span>
-                  </p>
-                  <p className="w-[40%] py-1.5 pl-2">
-                    <span className="title">DATE OF EXPIRY</span>
-                  </p>
-                </div>
-                {[
-                  "DRIVER’S LICENCE",
-                  "INTERNATIONAL PASSPORT",
-                  "NATIONAL IDENTITY",
-                  "OTHERS (SPECIFY)",
-                ].map((info, index) => (
-                  <div
-                    key={index}
-                    className="flex w-full border-b border-black"
-                  >
-                    {" "}
-                    <label
-                      className="pl-2 border-r border-black w-[40%] py-2.5"
-                      // htmlFor={info}
-                    >
-                      <span className="title">{info}.</span>
-                    </label>
-                    <div className="w-[10%] pl-2 py-2.5 border-r border-black">
-                      <input className="w-full outline-none" type="text" />
-                    </div>
-                    <div className="w-[10%] pl-2 py-2.5 border-r border-black">
-                      <input className="w-full outline-none" type="text" />
-                    </div>
-                    <div className="w-[40%] pl-2 py-2.5">
-                      <input className="w-full outline-none" type="date" />
-                    </div>
-                  </div>
-                ))}
-              </div> */}
                 <div className="border border-black border-b-0 text-sm font-medium">
                   {/* Header row */}
                   <div className="font-bold flex w-full border-b border-black">
                     <p className="border-r border-black w-[40%] py-1.5 pl-2">
-                      <span className="title">MEANS OF IDENTIFICATION</span>
+                      <span className="title">
+                        {isSmall ? "IDENTIFICATION" : "MEANS OF IDENTIFICATION"}
+                      </span>
                     </p>
-                    <p className="w-[10%] text-center py-1.5 border-r border-black">
+                    <p className="w-[12.5%] md:w-[10%] text-center py-1.5 border-r border-black">
                       <span className="title">YES</span>
                     </p>
-                    <p className="w-[10%] text-center py-1.5 border-r border-black">
+                    <p className="w-[12.5%] md:w-[10%] text-center py-1.5 border-r border-black">
                       <span className="title">NO</span>
                     </p>
-                    <p className="w-[40%] py-1.5 pl-2">
+                    <p className="w-[35%] md:w-[40%] py-1.5 pl-2">
                       <span className="title">DATE OF EXPIRY</span>
                     </p>
                   </div>
@@ -620,23 +596,30 @@ export default function EmployeeData() {
                     "INTERNATIONAL PASSPORT",
                     "NATIONAL IDENTITY",
                     "OTHERS (SPECIFY)",
-                  ].map((info) => (
+                  ].map((info, index) => (
                     <div
                       key={info}
                       className="flex w-full border-b border-black"
                     >
                       {/* Name column */}
                       <label className="pl-2 border-r border-black w-[40%] py-2.5">
-                        <span className="title">{info}</span>
+                        <span className="title">
+                          {" "}
+                          {index === 1
+                            ? isSmall
+                              ? "INT. PASSPORT"
+                              : "INTERNATIONAL PASSPORT"
+                            : info}
+                        </span>
                       </label>
 
                       {/* YES checkmark */}
                       <div
-                        className="w-[10%] flex items-center justify-center py-2.5 border-r border-black cursor-pointer"
+                        className="w-[12.5%] md:w-[10%] flex items-center justify-center py-2.5 border-r border-black cursor-pointer"
                         onClick={() => toggleAnswer(info as IdRow, "yes")}
                       >
                         <div
-                          className={`w-6 h-6 flex items-center justify-center border rounded 
+                          className={`w-4 md:w-6 h-4 md:h-6 flex items-center justify-center border rounded 
                         ${
                           answers[info as IdRow] === "yes"
                             ? "bg-black border-black"
@@ -652,11 +635,11 @@ export default function EmployeeData() {
 
                       {/* NO checkmark */}
                       <div
-                        className="w-[10%] flex items-center justify-center py-2.5 border-r border-black cursor-pointer"
+                        className="w-[12.5%] md:w-[10%] flex items-center justify-center py-2.5 border-r border-black cursor-pointer"
                         onClick={() => toggleAnswer(info as IdRow, "no")}
                       >
                         <div
-                          className={`w-6 h-6 flex items-center justify-center border rounded
+                          className={`w-4 md:w-6 h-4 md:h-6 flex items-center justify-center border rounded
                         ${
                           answers[info as IdRow] === "no"
                             ? "bg-black border-black"
@@ -671,7 +654,7 @@ export default function EmployeeData() {
                       </div>
 
                       {/* Date input */}
-                      <div className="w-[40%] pl-2 py-2.5">
+                      <div className="w-[35%] md:w-[40%] pl-2 py-2.5">
                         <input
                           type="date"
                           className="w-full outline-none"
@@ -683,7 +666,7 @@ export default function EmployeeData() {
                   ))}
                 </div>
                 <div>
-                  <div className="flex items-center justify-between w-full text-[14px] font-medium pl-2">
+                  <div className="flex items-center justify-between gap-8 md:gap-0 w-full text-[14px] font-medium pl-2">
                     {["EMPLOYEE SIGNATURE/DATE", "EMPLOYER SIGNATURE/DATE"].map(
                       (field, index) => (
                         <div
@@ -717,7 +700,7 @@ export default function EmployeeData() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 text-white rounded-lg transition-all font-bold uppercase mb-10"
+              className="w-[90%] mx-auto lg:w-full py-3 text-white rounded-lg transition-all font-bold uppercase mb-10"
               style={{
                 backgroundColor: "#333232",
               }}

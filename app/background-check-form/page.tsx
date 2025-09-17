@@ -3,10 +3,12 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
+import useFormPersist from "react-hook-form-persist";
 import { FaUpload } from "react-icons/fa";
 import { IoCloudUploadSharp } from "react-icons/io5";
 import Footer from "../../components/Footer";
 import Header from "../../components/Header";
+import { useIsSmallScreen } from "../../hooks/useIsSmallScreen";
 import {
   loadFilesFromLocalStorage,
   saveFilesToLocalStorage,
@@ -44,6 +46,7 @@ export default function BackgroundCheck() {
     useState<File | null>(null);
   const [degrees, setDegrees] = useState<string[]>(["Degree 1"]);
   const [certFiles, setCertFiles] = useState<(CertFile | null)[]>([null]);
+  const isSmall = useIsSmallScreen();
 
   const router = useRouter();
 
@@ -75,8 +78,12 @@ export default function BackgroundCheck() {
   const {
     register,
     handleSubmit,
+    watch,
+    setValue,
     formState: { errors },
   } = methods;
+
+  useFormPersist("backgroundCheckFormData", { watch, setValue });
 
   const onSubmit = async (data: BackgroundCheckProps): Promise<void> => {
     setLoading(true);
@@ -162,7 +169,7 @@ export default function BackgroundCheck() {
     id2: keyof BackgroundCheckProps;
     title: string;
   }[] = [
-    { id1: "firstInstitution", id2: "firstCourse", title: "Frist Degree" },
+    { id1: "firstInstitution", id2: "firstCourse", title: "First Degree" },
     { id1: "secondInstitution", id2: "secondCourse", title: "Second Degree" },
     { id1: "thirdInstitution", id2: "thirdCourse", title: "Third Degree" },
   ];
@@ -221,26 +228,25 @@ export default function BackgroundCheck() {
     <>
       <Header />
       <div
-        className="flex items-center justify-center min-h-screen px-6 pt-10 pb-16"
+        className="flex items-center justify-center min-h-screen md:px-6 md:pt-10 pb-16"
         style={{ backgroundColor: "#f1f5f9" }}
-        // style={{ backgroundColor: "#000" }}
       >
         <FormProvider {...methods}>
           <form
             id="form-container"
             onSubmit={handleSubmit(onSubmit)}
-            className="w-full max-w-3xl flex flex-col gap-8"
+            className="w-full md:max-w-3xl flex flex-col gap-8"
           >
             <section
               id="section-1"
-              className="w-full py-8 px-8 border space-y-6"
+              className="w-full py-8 px-4 md:px-8 border space-y-6"
               style={{
                 backgroundColor: "#ffffff",
                 boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
                 borderColor: "#e5e7eb",
               }}
             >
-              <div className="flex justify-end mb-10 mr-16">
+              <div className="flex justify-end md:mb-10 mr-10 md:mr-16">
                 <Image
                   src="/starsightLogo1.png"
                   alt="starsight logo"
@@ -273,7 +279,17 @@ export default function BackgroundCheck() {
                         className=" pl-2 border-r border-black w-[22%] py-0.5"
                         htmlFor={info.id}
                       >
-                        <span className="title">{info.title}</span>
+                        <span className="title">
+                          {info.title === "Contact Numbers"
+                            ? isSmall
+                              ? "Number"
+                              : "Contact Numbers"
+                            : info.title === "Current Address"
+                            ? isSmall
+                              ? "Address"
+                              : "Current Address"
+                            : info.title}
+                        </span>
                       </label>
                       <div className="relative w-[78%] pl-2 py-0.5">
                         <input
@@ -297,7 +313,7 @@ export default function BackgroundCheck() {
               </div>
 
               {/* PREVIOUS EMPLOYER DETAILS */}
-              <div className="pb-4">
+              <div className="pb-8 md:pb-4">
                 <h2 className="font-bold uppercase text-[14px]">
                   <span className="title">PREVIOUS EMPLOYER DETAILS</span>
                 </h2>
@@ -309,21 +325,12 @@ export default function BackgroundCheck() {
                     >
                       {" "}
                       <label
-                        className="text-center px-2.5 border-r border-black w-[18%] py-1.5"
+                        className="text-center px-2.5 border-r border-black w-[28%] md:w-[18%] py-1.5"
                         htmlFor={info.id}
                       >
                         <span className="title">{info.title}</span>
                       </label>
-                      <div className="relative w-[82%] pl-2 py-1.5">
-                        {/* <input
-                        {...register(info?.id, {
-                          required: `${info.title} is required`,
-                        })}
-                        className="w-full outline-none"
-                        id={info.id}
-                        type={info.type}
-                        
-                      /> */}
+                      <div className="relative w-[72%] md:w-[82%] pl-2 py-1.5">
                         <input
                           {...register(info?.id, {
                             required:
@@ -350,7 +357,7 @@ export default function BackgroundCheck() {
                           </p>
                         )}
                         {info?.placeholder && (
-                          <span className="absolute left-2 -bottom-4 text-xs font-semibold uppercase">
+                          <span className="absolute -left-20 md:left-2 -bottom-9 md:-bottom-4 text-xs font-semibold uppercase">
                             Upload the front page of your previous employment
                             offer letter in the document field
                           </span>
@@ -370,7 +377,9 @@ export default function BackgroundCheck() {
                 </h2>
                 <div className="border border-black border-b-0 text-sm font-medium">
                   <div className="font-bold flex w-full border-b border-black">
-                    <p className=" pl-2 border-r border-black w-[18%] py-0.5"></p>
+                    <p className=" pl-2 border-r border-black w-[18%] py-0.5">
+                      {isSmall ? "Degree" : ""}
+                    </p>
                     <p className="w-[50%] outline-none pl-2 py-0.5 border-r border-black ">
                       <span className="title">Institutions</span>
                     </p>
@@ -388,7 +397,10 @@ export default function BackgroundCheck() {
                         className=" pl-2 border-r border-black w-[18%] py-2.5"
                         htmlFor={info.id1}
                       >
-                        <span className="title">{info.title}</span>
+                        <span className="title">
+                          {info.title.replace(/degree/i, "")}
+                          <span className="hidden sm:inline">degree</span>
+                        </span>
                       </label>
                       <>
                         <div className="relative w-[50%] pl-2 py-2.5 border-r border-black">
@@ -435,16 +447,20 @@ export default function BackgroundCheck() {
                   ))}
                   <div className="font-bold flex w-full border-b border-black">
                     <p className=" pl-2 border-r border-black w-[18%] py-0.5">
-                      <span className="title">Certifcates</span>
+                      <span className="title">
+                        {isSmall ? "Cert" : "Certifcates"}
+                      </span>
                     </p>
-                    <p className="w-[50%] outline-none pl-2 py-0.5 border-r border-black ">
+                    <p className="w-[48%] md:w-[50%] outline-none text-xs md:text-sm px-1 md:pl-2 pr-0 py-0.5 border-r border-black ">
                       <span className="title">
                         Kindly attached certificates as stated above
                       </span>
                     </p>
-                    <div className="relative flex items-center font-semibold w-[32%] outline-none pl-2 py-0.5">
-                      <span className="title shrink-0">Matrix No:</span>
-                      <div className="pl-2">
+                    <div className="relative flex items-center font-semibold w-[34%] md:w-[32%] outline-none pl-1 md:pl-2 py-0.5">
+                      <span className="title shrink-0 text-xs md:text-sm">
+                        {isSmall ? "Mat No:" : "Matrix No:"}
+                      </span>
+                      <div className="pl:0.5 md:pl-2">
                         <input
                           {...register("matricNo")}
                           className="w-full outline-none"
@@ -731,7 +747,7 @@ export default function BackgroundCheck() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 text-white rounded-lg transition-all font-bold uppercase"
+              className="w-[90%] mx-auto md:w-full py-3 text-white rounded-lg transition-all font-bold uppercase"
               style={{
                 backgroundColor: "#333232",
               }}

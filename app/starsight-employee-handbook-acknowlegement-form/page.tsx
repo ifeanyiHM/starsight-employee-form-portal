@@ -2,6 +2,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
+import useFormPersist from "react-hook-form-persist";
 import Footer from "../../components/Footer";
 import Header from "../../components/Header";
 import {
@@ -41,7 +42,11 @@ export default function EmployeeAcknowlegement() {
     handleSubmit,
     formState: { errors },
     reset,
+    watch,
+    setValue,
   } = methods;
+
+  useFormPersist("employeeHandbookAcknowlegement", { watch, setValue });
 
   const onSubmit = async (data: EmployeeAcknowlegementProp): Promise<void> => {
     setLoading(true);
@@ -92,7 +97,7 @@ export default function EmployeeAcknowlegement() {
     <>
       <Header />
       <div
-        className="flex items-center justify-center min-h-screen p-6"
+        className="flex items-center justify-center min-h-screen md:p-6"
         style={{ backgroundColor: "#f1f5f9" }}
       >
         <FormProvider {...methods}>
@@ -103,7 +108,7 @@ export default function EmployeeAcknowlegement() {
           >
             <section
               id="section-1"
-              className="w-full py-8 px-20 border pt-28"
+              className="w-full md:py-8 px-4 md:px-20 border pt-10 md:pt-28"
               style={{
                 backgroundColor: "#ffffff",
                 boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
@@ -132,14 +137,14 @@ export default function EmployeeAcknowlegement() {
                     >
                       {" "}
                       <label
-                        className="font-bold pl-2 border-r border-black w-[25%] py-6.5"
+                        className="font-bold pl-2 border-r border-black w-[30%] md:w-[25%] py-6.5"
                         htmlFor={info}
                       >
                         <span className="title">
                           {info === "placeOfWork" ? "Place of Work" : info}:
                         </span>
                       </label>
-                      <div className="w-[75%] pl-2 py-6.5">
+                      <div className="w-[70%] md:w-[75%] pl-2 py-6.5">
                         <input
                           {...register(info, {
                             required: `${info} is required`,
@@ -206,7 +211,7 @@ export default function EmployeeAcknowlegement() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 text-white rounded-lg transition-all font-bold uppercase mb-10"
+              className="w-[90%] mx-auto md:w-full py-3 text-white rounded-lg transition-all font-bold uppercase mb-10"
               style={{
                 backgroundColor: "#333232",
               }}

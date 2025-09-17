@@ -4,10 +4,18 @@ import { useEffect, useState } from "react";
 interface ListDetailsProps {
   title: string;
   subtitle: string;
+  substitute: string;
   linkTitle: string;
+  checkDownload?: () => void;
 }
 
-function ListDetails({ title, subtitle, linkTitle }: ListDetailsProps) {
+function ListDetails({
+  title,
+  subtitle,
+  substitute,
+  linkTitle,
+  checkDownload,
+}: ListDetailsProps) {
   const [completedForms, setCompletedForms] = useState<string[]>([]);
 
   useEffect(() => {
@@ -21,6 +29,7 @@ function ListDetails({ title, subtitle, linkTitle }: ListDetailsProps) {
       <li>
         <Link
           href={linkTitle}
+          onClick={checkDownload}
           className={`block group ${
             completedForms.includes(title) ? "pointer-events-none" : ""
           }`}
@@ -50,9 +59,7 @@ function ListDetails({ title, subtitle, linkTitle }: ListDetailsProps) {
                     } flex items-center text-sm text-gray-500`}
                   >
                     <p>
-                      {completedForms.includes(title)
-                        ? "This form has been completed"
-                        : subtitle}
+                      {completedForms.includes(title) ? substitute : subtitle}
                     </p>
                   </div>
                 </div>
