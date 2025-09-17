@@ -1,27 +1,29 @@
 import Image from "next/image";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import useForm from "../context/useForm";
-
-// interface HeaderProps {
-//   searchTerm: string;
-//   setSearchTerm: (type: string) => void;
-// }
 
 function Header() {
   const { searchTerm, setSearchTerm } = useForm();
+
+  const router = useRouter();
   return (
     <header className="bg-white shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
-            <Link href="/">
+            <button
+              type="button"
+              onClick={() => {
+                router.replace("/");
+              }}
+            >
               <Image
                 src="/starsightLogo1.png"
                 alt="starsight logo"
                 width="117"
                 height="42"
               />
-            </Link>
+            </button>
           </div>
 
           <div className="flex items-center justify-end">

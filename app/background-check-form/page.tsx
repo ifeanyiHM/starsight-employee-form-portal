@@ -137,7 +137,7 @@ export default function BackgroundCheck() {
 
       setUploadedEmploymentLetter(null);
       setCertFiles([]);
-      router.push("/");
+      router.replace("/");
     } catch (error) {
       console.error("Error storing files:", error);
     } finally {
@@ -488,7 +488,7 @@ export default function BackgroundCheck() {
                         {...register(info, {
                           required: `${info} is required`,
                         })}
-                        className="outline-none"
+                        className="outline-none w-full"
                         id={info}
                         type={info === "date" ? "date" : "text"}
                       />
@@ -502,113 +502,6 @@ export default function BackgroundCheck() {
                 ))}
               </div>
             </section>
-
-            {/* <section
-            className="w-full py-8 px-8 border space-y-6 rounded-lg"
-            style={{
-              backgroundColor: "#ffffff",
-              boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
-              borderColor: "#e5e7eb",
-            }}
-          >
-            <h2 className="text-xl font-semibold text-gray-800 uppercase">
-              Upload Certificates
-            </h2>
-
-            <div className="grid gap-6">
-              {qualifications.map((cert, index) => (
-                <div key={index} className="space-y-2">
-                  <small className="font-semibold">
-                    {cert.title} <span className="text-red-500">*</span>
-                  </small>
-
-                  <input
-                    type="file"
-                    id={`certificate-${index}`}
-                    className="hidden"
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      const file = e.target.files?.[0];
-                      if (file) {
-                        const withPreview = Object.assign(file, {
-                          preview: URL.createObjectURL(file),
-                        });
-
-                        setCertFiles((prev) => {
-                          const updated = [...prev];
-                          updated[index] = withPreview;
-                          return updated;
-                        });
-                      }
-                    }}
-                  />
-
-                  {certFiles[index] ? (
-                    <div className="flex p-4 flex-col md:flex-row md:items-end gap-6">
-                   
-                      <div
-                        className="h-[20rem] w-full md:w-64 md:aspect-square rounded-lg bg-contain bg-no-repeat bg-center border  border-[#333232]"
-                        style={{
-                          backgroundImage: certFiles[index]?.type.startsWith(
-                            "image/"
-                          )
-                            ? `url(${certFiles[index]?.preview})`
-                            : "none",
-                        }}
-                      >
-                        {!certFiles[index]?.type.startsWith("image/") && (
-                          <div className="flex items-center justify-center h-full text-gray-400">
-                            📄 {certFiles[index]?.name}
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="grid gap-4 md:gap-8">
-                        <div className="grid gap-1">
-                          <p className="text-black/60">
-                            <span className="text-baseblue">Name: </span>
-                            {certFiles[index]?.name}
-                          </p>
-                          <p className="text-black/60">
-                            <span className="text-baseblue">Size: </span>
-                            {(certFiles[index]?.size / (1024 * 1024)).toFixed(
-                              2
-                            )}{" "}
-                            MB
-                          </p>
-                        </div>
-
-                        <label
-                          className="bg-baseblue justify-center flex gap-4 w-full md:w-fit text-black rounded-md py-2 cursor-pointer"
-                          htmlFor={`certificate-${index}`}
-                        >
-                          Change File{" "}
-                          <span className="">
-                            <FaUpload />
-                          </span>
-                        </label>
-                      </div>
-                    </div>
-                  ) : (
-                    <div>
-                      <label
-                        htmlFor={`certificate-${index}`}
-                        className="grid place-content-center bg-[#fff] h-[182px] cursor-pointer rounded-sm text-6xl justify-center transition-all duration-200 border  border-[#333232]"
-                      >
-                        <IoCloudUploadSharp className="mx-auto text-baseblue text-[#333232]" />
-                        <p className="text-sm text-center">
-                          Click to upload file
-                        </p>
-                        <p className="text-sm text-center">
-                          maximum size{" "}
-                          <span className="text-baseblue">2MB</span>
-                        </p>
-                      </label>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </section> */}
 
             <section
               className="w-full py-8 px-8 border space-y-6 rounded-lg"

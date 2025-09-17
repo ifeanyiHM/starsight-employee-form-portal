@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Roboto, Source_Sans_3 } from "next/font/google";
+import ScrollToTop from "../components/ScrollToTop";
 import { FormProvider } from "../context/FormContext";
 import "./globals.css";
 
@@ -32,6 +33,7 @@ export default function RootLayout({
       <body
         className={`${sourceSans3.variable} ${roboto.variable} antialiased`}
       >
+        <ScrollToTop />
         <FormProvider>{children}</FormProvider>
       </body>
     </html>

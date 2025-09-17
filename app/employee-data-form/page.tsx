@@ -172,7 +172,7 @@ export default function EmployeeData() {
       localStorage.setItem("completedForms", JSON.stringify(prev));
 
       reset();
-      router.push("/");
+      router.replace("/");
     } catch (error) {
       console.error("Error:", error);
       alert("Failed to generate or send PDF");
