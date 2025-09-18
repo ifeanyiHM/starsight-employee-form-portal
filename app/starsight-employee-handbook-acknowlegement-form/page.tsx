@@ -36,7 +36,6 @@ export default function EmployeeAcknowlegement() {
     },
   });
 
-  // ✅ Destructure only what you need from methods
   const {
     register,
     handleSubmit,

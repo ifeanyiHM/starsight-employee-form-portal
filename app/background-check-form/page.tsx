@@ -108,10 +108,10 @@ export default function BackgroundCheck() {
         formData.append("attachment_1", uploadedEmploymentLetter);
       }
 
-      // ✅ Append certificate files as well
+      // Append certificate files as well
       certFiles.forEach((file, i) => {
         if (file) {
-          // ✅ file is guaranteed to be a Blob (File) here
+          // file is guaranteed to be a Blob (File) here
           formData.append(`attachment_cert_${i + 1}`, file);
         }
       });

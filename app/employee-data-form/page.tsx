@@ -117,7 +117,6 @@ export default function EmployeeData() {
     },
   });
 
-  // ✅ Destructure only what you need from methods
   const {
     register,
     handleSubmit,
@@ -271,14 +270,16 @@ export default function EmployeeData() {
                       </p>
                       <CiCamera size={24} />
                     </div>
-                  )}
-                  <input
-                    type="file"
-                    accept="image/*"
-                    {...register("passport")}
-                    onChange={handleFileChange}
-                    className="absolute opacity-0 cursor-pointer w-full h-full"
-                  />
+                  )}{" "}
+                  <div className="preview absolute bg-transparent text-transparent opacity-0 w-full h-full">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      {...register("passport")}
+                      onChange={handleFileChange}
+                      className="w-full h-full cursor-pointer"
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -347,7 +348,7 @@ export default function EmployeeData() {
                         </div>
                         {[11, 12, 13, 14, 19].includes(index) && (
                           <input
-                            className="w-[calc(100%-2rem)] outline-none ml-8 utline-none pl-2 border-b-2 border-dotted border-black -translate-y-1.5"
+                            className="secondaryinput w-[calc(100%-2rem)] outline-none ml-8 utline-none pl-2 border-b-2 border-dotted border-black -translate-y-1.5"
                             id={field.id}
                             type="text"
                           />

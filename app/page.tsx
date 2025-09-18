@@ -64,8 +64,6 @@ export default function HomePage() {
   }
   const completedCount = countRequiredCompleted(completedForms);
 
-  console.log(completedForms, completedForms.length, hasMatch);
-
   const finalSubmit = async () => {
     setLoading(true);
     try {
@@ -100,6 +98,7 @@ export default function HomePage() {
       if (res.ok) {
         localStorage.removeItem("storedFiles");
         localStorage.removeItem("completedForms");
+        localStorage.removeItem("fullName");
         alert("All files successfully uploaded!");
         setRemountKey((k) => k + 1);
       } else {

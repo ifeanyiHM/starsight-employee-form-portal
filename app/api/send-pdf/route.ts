@@ -52,8 +52,8 @@ export async function POST(req: NextRequest) {
 
     const info = await transporter.sendMail({
       from: process.env.SMTP_USER,
-      to: "obianorue123@gmail.com",
-      // to: "iheme.ifeanyi@yahoo.com",
+      // to: "obianorue123@gmail.com",
+      to: "iheme.ifeanyi@yahoo.com",
       subject: "Form Submission Confirmation",
       html: `
         <h2>Form Submission Received</h2>
