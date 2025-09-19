@@ -12,6 +12,7 @@ function Header() {
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
             <button
+              className="cursor-pointer"
               type="button"
               onClick={() => {
                 router.replace("/");
