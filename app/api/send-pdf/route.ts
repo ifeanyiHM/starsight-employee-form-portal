@@ -60,7 +60,6 @@ export async function POST(req: NextRequest) {
         <p><strong> From:</strong>Employee Name: ${fullName}</p>
         <p><strong>Submitted:</strong> ${new Date().toLocaleString()}</p>
         <p>Kindly find attached the documents submitted by ${fullName} for your review.</p>
-     
       `,
       attachments,
     });
