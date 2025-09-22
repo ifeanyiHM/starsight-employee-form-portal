@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 
-import type Mail from "nodemailer/lib/mailer"; // ✅ Import types
+import type Mail from "nodemailer/lib/mailer";
 
 interface NodeMailerError extends Error {
-  code?: string; // Nodemailer and network errors often have this
+  code?: string;
 }
 
 export async function POST(req: NextRequest) {
@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing PDF file" }, { status: 400 });
     }
 
-    const attachments: Mail.Attachment[] = []; // ✅ Strong typing
+    const attachments: Mail.Attachment[] = [];
 
     // Add generated PDF
     attachments.push({
@@ -85,59 +85,3 @@ export async function POST(req: NextRequest) {
     );
   }
 }
-
-// export async function POST(req: NextRequest) {
-//   // ✅ Correct typing here
-//   try {
-//     const data = await req.formData(); // ✅ Now TypeScript recognizes formData()
-//     const file = data.get("file") as File;
-//     const email = data.get("email") || "Unknown User";
-
-//     if (!file) {
-//       return NextResponse.json({ error: "Missing PDF file" }, { status: 400 });
-//     }
-
-//     const buffer = Buffer.from(await file.arrayBuffer());
-
-//     const transporter = nodemailer.createTransport({
-//       host: "smtp.gmail.com",
-//       port: 587,
-//       secure: false,
-//       auth: {
-//         user: process.env.SMTP_USER,
-//         pass: process.env.SMTP_PASS,
-//       },
-//     });
-
-//     const info = await transporter.sendMail({
-//       from: process.env.SMTP_USER,
-//       to: "iheme.ifeanyi@yahoo.com",
-//       // to: "obianorue123@gmail.com",
-//       subject: "Form Submission Confirmation",
-//       html: `
-//         <h2>Form Submission Received</h2>
-//         <p><strong>From:</strong> ${email}</p>
-//         <p><strong>Submitted:</strong> ${new Date().toLocaleString()}</p>
-//         <p>Thank you for your submission. Your form data is attached.</p>
-//       `,
-//       attachments: [
-//         {
-//           filename: `form-submission-${Date.now()}.pdf`,
-//           content: buffer,
-//           contentType: "application/pdf",
-//         },
-//       ],
-//     });
-
-//     return NextResponse.json({
-//       success: true,
-//       messageId: info.messageId,
-//     });
-//   } catch (error) {
-//     console.error("❌ Error sending PDF:", error);
-//     return NextResponse.json(
-//       { error: "Failed to send email" },
-//       { status: 500 }
-//     );
-//   }
-// }
