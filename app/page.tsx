@@ -101,6 +101,7 @@ export default function HomePage() {
         localStorage.removeItem("fullName");
         alert("All files successfully uploaded!");
         setRemountKey((k) => k + 1);
+        setCompletedForms([]);
       } else {
         throw new Error("Failed to send email");
       }
@@ -228,14 +229,14 @@ export default function HomePage() {
           </ul>
         </div>
 
-        {hasMatch && completedForms.length < 5 ? (
+        {hasMatch && completedForms?.length < 5 ? (
           <div className="flex justify-between items-center mt-4 px-2">
             <p className="text-sm text-gray-700">
               To proceed, All reference documents must be downloaded before the
               Submit button is activated.
             </p>
           </div>
-        ) : completedForms.length === 5 ? (
+        ) : completedForms?.length === 5 ? (
           <div className="flex justify-between items-center mt-4 px-2">
             <p className="text-sm text-gray-700">
               All forms have been successfully completed. Proceed to sumbit to

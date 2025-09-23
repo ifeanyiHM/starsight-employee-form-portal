@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
         "humanresources@starsightenergy.com",
         "obianorue123@gmail.com",
       ],
-      // to: "humanresorces@starsightenergy.com",
+      // to: "ifeanyihm@gmail.com",
       subject: "Form Submission Confirmation",
       html: `
         <h2>Form Submission Received</h2>
