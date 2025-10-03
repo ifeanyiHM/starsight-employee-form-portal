@@ -16,6 +16,7 @@ export default function HomePage() {
   const [loading, setLoading] = useState(false);
   const [completedForms, setCompletedForms] = useState<string[]>([]);
   const [remountKey, setRemountKey] = useState(0);
+  const [resetMessage, setResetMessage] = useState(false);
 
   useEffect(() => {
     // This runs only in the browser
@@ -229,47 +230,75 @@ export default function HomePage() {
           </ul>
         </div>
 
-        {hasMatch && completedForms?.length < 5 ? (
-          <div className="flex justify-between items-center mt-4 px-2">
-            <p className="text-sm text-gray-700">
-              To proceed, All reference documents must be downloaded before the
-              Submit button is activated.
-            </p>
-          </div>
-        ) : completedForms?.length === 5 ? (
-          <div className="flex justify-between items-center mt-4 px-2">
-            <p className="text-sm text-gray-700">
-              All forms have been successfully completed. Proceed to sumbit to
-              the HR department.
-            </p>
-            {/* Submit Button */}
+        <div className="md:flex items-center">
+          {hasMatch && completedForms?.length < 5 ? (
+            <div className="flex justify-between items-center mt-4 px-2">
+              <p className="text-sm text-gray-700">
+                To proceed, All reference documents must be downloaded before
+                the Submit button is activated.
+              </p>
+            </div>
+          ) : completedForms?.length === 5 ? (
+            <div className="w-full flex justify-between items-center mt-4 px-2">
+              <p className="text-sm text-gray-700">
+                All forms have been successfully completed. Proceed to sumbit to
+                the HR department.
+              </p>
+              {/* Submit Button */}
+              <button
+                type="submit"
+                disabled={loading}
+                onClick={finalSubmit}
+                className="w-auto py-2 px-5 text-white rounded-full transition-all font-medium cursor-pointer"
+                style={{
+                  backgroundColor: "#333232",
+                }}
+                onMouseOver={(e) => {
+                  if (!loading) {
+                    (e.target as HTMLButtonElement).style.backgroundColor =
+                      "#444343";
+                  }
+                }}
+                onMouseOut={(e) => {
+                  if (!loading) {
+                    (e.target as HTMLButtonElement).style.backgroundColor =
+                      "#333232";
+                  }
+                }}
+              >
+                {loading ? "Submitting..." : "Submit"}
+              </button>
+            </div>
+          ) : (
+            ""
+          )}
+          <div className="text-end relative ml-auto mt-2 md:mt-4 px-2">
             <button
-              type="submit"
-              disabled={loading}
-              onClick={finalSubmit}
-              className="w-auto py-2 px-5 text-white rounded-full transition-all font-medium cursor-pointer"
-              style={{
-                backgroundColor: "#333232",
-              }}
-              onMouseOver={(e) => {
-                if (!loading) {
-                  (e.target as HTMLButtonElement).style.backgroundColor =
-                    "#444343";
+              onClick={() => {
+                const confirmReset = window.confirm(
+                  "Are you sure you want to restart the process? This will clear all data you have already entered."
+                );
+                if (confirmReset) {
+                  localStorage.removeItem("storedFiles");
+                  localStorage.removeItem("completedForms");
+                  localStorage.removeItem("fullName");
+                  setRemountKey((k) => k + 1);
+                  setCompletedForms([]);
                 }
               }}
-              onMouseOut={(e) => {
-                if (!loading) {
-                  (e.target as HTMLButtonElement).style.backgroundColor =
-                    "#333232";
-                }
-              }}
+              onMouseOver={() => setResetMessage(true)}
+              onMouseOut={() => setResetMessage(false)}
+              className="w-auto py-2 px-5 text-blck border border-[#333232] rounded-full transition-all font-medium cursor-pointer"
             >
-              {loading ? "Submitting..." : "Submit"}
+              Restart
             </button>
+            {resetMessage && (
+              <span className="absolute -left-8 -bottom-8 text-xs py-1 px-2 w-auto text-nowrap bg-white shadow sm:[border-radius:0.5rem_0_0.5rem_0.5rem] text-gray-500">
+                Restart form process
+              </span>
+            )}
           </div>
-        ) : (
-          ""
-        )}
+        </div>
 
         {/* Empty state */}
         {filteredForms.length === 0 && (
