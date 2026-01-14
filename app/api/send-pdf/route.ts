@@ -40,15 +40,25 @@ export async function POST(req: NextRequest) {
 
     const transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",
-      port: 587,
-      secure: false,
+      port: 465,
+      secure: true, // IMPORTANT
       auth: {
         user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
+        pass: process.env.SMTP_PASS, // Gmail App Password
       },
-      connectionTimeout: 60_000,
-      greetingTimeout: 60_000,
     });
+
+    // const transporter = nodemailer.createTransport({
+    //   host: "smtp.gmail.com",
+    //   port: 587,
+    //   secure: false,
+    //   auth: {
+    //     user: process.env.SMTP_USER,
+    //     pass: process.env.SMTP_PASS,
+    //   },
+    //   connectionTimeout: 60_000,
+    //   greetingTimeout: 60_000,
+    // });
 
     const info = await transporter.sendMail({
       from: process.env.SMTP_USER,
@@ -61,7 +71,7 @@ export async function POST(req: NextRequest) {
       subject: "Form Submission Confirmation",
       html: `
         <h2>Form Submission Received</h2>
-        <p><strong> From:</strong>Employee Name: ${fullName}</p>
+        <p><strong>Employee Name:</strong> ${fullName}</p>
         <p><strong>Submitted:</strong> ${new Date().toLocaleString()}</p>
         <p>Kindly find attached the documents submitted by ${fullName} for your review.</p>
       `,
