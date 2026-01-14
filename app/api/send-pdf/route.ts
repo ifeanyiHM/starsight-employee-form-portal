@@ -53,8 +53,8 @@ export async function POST(req: NextRequest) {
     const info = await transporter.sendMail({
       from: process.env.SMTP_USER,
       to: [
-        "namadike@starsightenergy.com",
-        "humanresources@starsightenergy.com",
+        "iumeudu@starsightenergy.com",
+        "paugustine@starsightenergy.com",
         "obianorue123@gmail.com",
       ],
       // to: "ifeanyihm@gmail.com",
