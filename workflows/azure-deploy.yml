@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_WEBAPP_NAME: starsight-employee-form-portal
+  AZURE_WEBAPP_NAME: starsight-employee-form-portal-a5hgckcnegcbc9gw
   NODE_VERSION: "20.x"
 
 jobs:
