@@ -88,14 +88,14 @@ export async function POST(req: NextRequest) {
       console.error("❌ Internet failure (timeout):", err);
       return NextResponse.json(
         { error: "Internet failure. Please try again." },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
     console.error("❌ Error sending PDF:", err);
     return NextResponse.json(
       { error: "Failed to send email" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
