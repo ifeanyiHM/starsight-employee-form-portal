@@ -1,0 +1,11 @@
+{
+  "/_global-error/page": "/_global-error",
+  "/_not-found/page": "/_not-found",
+  "/api/send-pdf/route": "/api/send-pdf",
+  "/background-check-form/page": "/background-check-form",
+  "/employee-data-form/page": "/employee-data-form",
+  "/favicon.ico/route": "/favicon.ico",
+  "/page": "/",
+  "/starsight-code-of-conduct/page": "/starsight-code-of-conduct",
+  "/starsight-employee-handbook-acknowlegement-form/page": "/starsight-employee-handbook-acknowlegement-form"
+}
