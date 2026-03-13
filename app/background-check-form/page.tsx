@@ -14,6 +14,7 @@ import {
   saveFilesToLocalStorage,
 } from "../../utils/browserStorage";
 import { generatePDFFromSections } from "../../utils/pdfGenerator";
+import AccessGuard from "@/components/AccessGuard";
 
 interface BackgroundCheckProps {
   fullName: string;
@@ -225,7 +226,7 @@ export default function BackgroundCheck() {
   ];
 
   return (
-    <>
+    <AccessGuard>
       <Header />
       <div
         className="flex items-center justify-center min-h-screen md:px-6 md:pt-10 pb-16"
@@ -285,10 +286,10 @@ export default function BackgroundCheck() {
                               ? "Number"
                               : "Contact Numbers"
                             : info.title === "Current Address"
-                            ? isSmall
-                              ? "Address"
-                              : "Current Address"
-                            : info.title}
+                              ? isSmall
+                                ? "Address"
+                                : "Current Address"
+                              : info.title}
                         </span>
                       </label>
                       <div className="relative w-[78%] pl-2 py-0.5">
@@ -342,7 +343,7 @@ export default function BackgroundCheck() {
                           {...(info.type === "file"
                             ? {
                                 onChange: (
-                                  e: React.ChangeEvent<HTMLInputElement>
+                                  e: React.ChangeEvent<HTMLInputElement>,
                                 ) => {
                                   const file = e.target.files?.[0] || null;
                                   setUploadedEmploymentLetter(file);
@@ -569,7 +570,7 @@ export default function BackgroundCheck() {
                           className="h-[20rem] w-full md:w-64 rounded-lg bg-contain bg-no-repeat bg-center border border-[#333232]"
                           style={{
                             backgroundImage: certFiles[index]?.type.startsWith(
-                              "image/"
+                              "image/",
                             )
                               ? `url(${certFiles[index]?.preview})`
                               : "none",
@@ -663,6 +664,6 @@ export default function BackgroundCheck() {
         </FormProvider>
       </div>
       <Footer />
-    </>
+    </AccessGuard>
   );
 }

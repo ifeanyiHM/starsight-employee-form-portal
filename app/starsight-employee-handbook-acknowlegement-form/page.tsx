@@ -10,6 +10,7 @@ import {
   saveFilesToLocalStorage,
 } from "../../utils/browserStorage";
 import { generatePDFFromSections } from "../../utils/pdfGenerator";
+import AccessGuard from "@/components/AccessGuard";
 
 export interface EmployeeAcknowlegementProp {
   Name: string;
@@ -93,7 +94,7 @@ export default function EmployeeAcknowlegement() {
   };
 
   return (
-    <>
+    <AccessGuard>
       <Header />
       <div
         className="flex items-center justify-center min-h-screen md:p-6"
@@ -233,6 +234,6 @@ export default function EmployeeAcknowlegement() {
         </FormProvider>
       </div>
       <Footer />
-    </>
+    </AccessGuard>
   );
 }

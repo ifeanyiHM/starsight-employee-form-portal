@@ -4,6 +4,7 @@ import Link from "next/link";
 import { MdOutlineLocalPrintshop } from "react-icons/md";
 import Footer from "../../components/Footer";
 import Header from "../../components/Header";
+import AccessGuard from "@/components/AccessGuard";
 
 export default function CodeOfConduct() {
   function checkDownload() {
@@ -13,7 +14,7 @@ export default function CodeOfConduct() {
     localStorage.setItem("completedForms", JSON.stringify(prev));
   }
   return (
-    <>
+    <AccessGuard>
       <Header />
       <div
         className="flex items-center justify-center min-h-screen md:p-6"
@@ -558,6 +559,6 @@ export default function CodeOfConduct() {
         </div>
       </div>{" "}
       <Footer />
-    </>
+    </AccessGuard>
   );
 }

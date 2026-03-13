@@ -14,6 +14,7 @@ import {
   saveFilesToLocalStorage,
 } from "../../utils/browserStorage";
 import { generatePDFFromSections } from "../../utils/pdfGenerator";
+import AccessGuard from "@/components/AccessGuard";
 
 export interface EmployeeFormDataProp {
   surname: string;
@@ -221,7 +222,7 @@ export default function EmployeeData() {
   ];
 
   return (
-    <>
+    <AccessGuard>
       <Header />
       <div
         className="flex items-center justify-center min-h-screen lg:p-6"
@@ -303,12 +304,12 @@ export default function EmployeeData() {
                                 {[6, 8, 10].includes(index) && !isSmall
                                   ? ""
                                   : index === 7 && !isSmall
-                                  ? "7."
-                                  : index === 9 && !isSmall
-                                  ? "8."
-                                  : index > 10 && !isSmall
-                                  ? `${index - 2}.`
-                                  : `${index + 1}.`}
+                                    ? "7."
+                                    : index === 9 && !isSmall
+                                      ? "8."
+                                      : index > 10 && !isSmall
+                                        ? `${index - 2}.`
+                                        : `${index + 1}.`}
                               </span>{" "}
                               {field.title} :
                             </span>
@@ -335,8 +336,8 @@ export default function EmployeeData() {
                                 field.id.startsWith("date")
                                   ? "date"
                                   : field.id.startsWith("number")
-                                  ? "number"
-                                  : "text"
+                                    ? "number"
+                                    : "text"
                               }
                             />
                             {errors[field.id] && (
@@ -395,18 +396,18 @@ export default function EmployeeData() {
                                 {index === 21 && !isSmall
                                   ? "19."
                                   : index === 22 && !isSmall
-                                  ? "20."
-                                  : index === 24 && !isSmall
-                                  ? "21."
-                                  : index === 25 && !isSmall
-                                  ? "22."
-                                  : index === 26 && !isSmall
-                                  ? "23."
-                                  : index === 27
-                                  ? ""
-                                  : isSmall
-                                  ? `${index + 1}.`
-                                  : ""}
+                                    ? "20."
+                                    : index === 24 && !isSmall
+                                      ? "21."
+                                      : index === 25 && !isSmall
+                                        ? "22."
+                                        : index === 26 && !isSmall
+                                          ? "23."
+                                          : index === 27
+                                            ? ""
+                                            : isSmall
+                                              ? `${index + 1}.`
+                                              : ""}
                               </span>{" "}
                               {field.title} :
                             </span>
@@ -688,7 +689,7 @@ export default function EmployeeData() {
                             />
                           </div>
                         </div>
-                      )
+                      ),
                     )}
                   </div>
                 </div>{" "}
@@ -724,6 +725,6 @@ export default function EmployeeData() {
         </FormProvider>
       </div>
       <Footer />
-    </>
+    </AccessGuard>
   );
 }
