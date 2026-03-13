@@ -2,7 +2,7 @@
 
 import { documents, forms } from "@/data/forms";
 import { slugify } from "@/utils/slugify";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
@@ -10,29 +10,32 @@ import ListDetails from "../components/ListDetails";
 import useForm from "../context/useForm";
 import { loadFilesFromLocalStorage } from "../utils/browserStorage";
 
+/** Captures ?t= token from the email link and saves it to localStorage.
+ *  Must be in its own component so it can be wrapped in <Suspense>. */
+function TokenCapture() {
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const t = searchParams.get("t");
+    if (t) {
+      localStorage.setItem("portalToken", t);
+      const url = new URL(window.location.href);
+      url.searchParams.delete("t");
+      window.history.replaceState({}, "", url.toString());
+    }
+  }, [searchParams]);
+
+  return null;
+}
+
 export default function HomePage() {
   const { searchTerm } = useForm();
-  const searchParams = useSearchParams();
 
   const [activeCategory, setActiveCategory] = useState("all");
   const [loading, setLoading] = useState(false);
   const [completedForms, setCompletedForms] = useState<string[]>([]);
   const [remountKey, setRemountKey] = useState(0);
   const [resetMessage, setResetMessage] = useState(false);
-
-  useEffect(() => {
-    // Capture the signed token from the email link (?t=...) and store it
-    // in localStorage so the verify modal can use it — even after the URL
-    // is cleaned up or the page is refreshed.
-    const t = searchParams.get("t");
-    if (t) {
-      localStorage.setItem("portalToken", t);
-      // Clean the token from the URL without a page reload
-      const url = new URL(window.location.href);
-      url.searchParams.delete("t");
-      window.history.replaceState({}, "", url.toString());
-    }
-  }, [searchParams]);
 
   useEffect(() => {
     // This runs only in the browser
@@ -133,7 +136,9 @@ export default function HomePage() {
   return (
     <div key={remountKey} className="min-h-screen bg-gray-50">
       {/* Header */}
-
+      <Suspense fallback={null}>
+        <TokenCapture />
+      </Suspense>
       <Header />
 
       {/* Main content */}
