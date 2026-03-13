@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { isAccessValid, markAccessGranted } from "./AccessGuard";
 
 interface ListDetailsProps {
   title: string;
@@ -32,11 +33,6 @@ function ListDetails({
     setCompletedForms(stored ? JSON.parse(stored) : []);
   }, []);
 
-  const isVerifiedThisSession = (): boolean => {
-    if (typeof window === "undefined") return false;
-    return sessionStorage.getItem("portalAccessGranted") === "true";
-  };
-
   const navigate = () => {
     if (checkDownload) checkDownload();
     if (linkTitle.endsWith(".pdf")) {
@@ -50,8 +46,8 @@ function ListDetails({
     e.preventDefault();
     if (completedForms.includes(title)) return;
 
-    // Already verified this session — go straight through
-    if (isVerifiedThisSession()) {
+    // Already verified within the last 24h — go straight through
+    if (isAccessValid()) {
       navigate();
       return;
     }
@@ -67,17 +63,26 @@ function ListDetails({
       setError("Please enter the full 6-digit code.");
       return;
     }
+
+    const token = localStorage.getItem("portalToken");
+    if (!token) {
+      setError(
+        "Access token not found. Please open the portal using the link in your email.",
+      );
+      return;
+    }
+
     setError("");
     setStep("verifying");
     try {
       const res = await fetch("/api/verify-code", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code }),
+        body: JSON.stringify({ code, token }),
       });
       const data = await res.json();
       if (res.ok && data.success) {
-        sessionStorage.setItem("portalAccessGranted", "true");
+        markAccessGranted();
         setShowModal(false);
         navigate();
       } else {

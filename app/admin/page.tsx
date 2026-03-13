@@ -63,6 +63,15 @@ export default function AdminPage() {
       });
       const data = await res.json();
       if (res.ok && data.success) {
+        // Store the signed token in localStorage keyed by email.
+        // Sending a new code to the same email overwrites the old token,
+        // automatically invalidating the previous code for that email.
+        const tokens: Record<string, string> = JSON.parse(
+          localStorage.getItem("accessTokens") || "{}",
+        );
+        tokens[recipientEmail.toLowerCase()] = data.token;
+        localStorage.setItem("accessTokens", JSON.stringify(tokens));
+
         setSendStatus("success");
         setSendMessage(`Access code sent to ${recipientEmail}`);
         setSentList((prev) => [

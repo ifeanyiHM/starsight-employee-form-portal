@@ -1,46 +1,33 @@
 import { NextRequest, NextResponse } from "next/server";
-// import "@/types/globals";
+import { verifyToken } from "@/utils/AccessToken";
 
 export async function POST(req: NextRequest) {
   try {
-    const { code } = await req.json();
+    const { code, token } = await req.json();
 
-    if (!code) {
+    if (!code || typeof code !== "string") {
       return NextResponse.json(
         { error: "Access code is required" },
         { status: 400 },
       );
     }
 
-    const trimmedCode = code.trim();
-
-    // Search all stored codes for a matching one
-    if (!global.accessCodes || global.accessCodes.size === 0) {
+    if (!token || typeof token !== "string") {
       return NextResponse.json(
-        { error: "Invalid code. Please check and try again." },
-        { status: 401 },
+        { error: "No token found. Please ask HR to resend the code." },
+        { status: 400 },
       );
     }
 
-    let matchedEmail: string | null = null;
+    const result = verifyToken(token, code);
 
-    for (const [email, entry] of global.accessCodes.entries()) {
-      if (entry.code === trimmedCode) {
-        if (Date.now() > entry.expiresAt) {
-          global.accessCodes.delete(email);
-          return NextResponse.json(
-            {
-              error: "This code has expired. Please contact HR for a new one.",
-            },
-            { status: 410 },
-          );
-        }
-        matchedEmail = email;
-        break;
+    if (!result.valid) {
+      if (result.reason === "expired") {
+        return NextResponse.json(
+          { error: "This code has expired. Please ask HR to send a new one." },
+          { status: 410 },
+        );
       }
-    }
-
-    if (!matchedEmail) {
       return NextResponse.json(
         { error: "Invalid code. Please check and try again." },
         { status: 401 },

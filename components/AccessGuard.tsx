@@ -7,21 +7,38 @@ interface AccessGuardProps {
   children: React.ReactNode;
 }
 
+const STORAGE_KEY = "portalAccess";
+const TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
+
+export function markAccessGranted() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({ grantedAt: Date.now() }));
+}
+
+export function isAccessValid(): boolean {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return false;
+    const { grantedAt } = JSON.parse(raw) as { grantedAt: number };
+    return Date.now() - grantedAt < TTL_MS;
+  } catch {
+    return false;
+  }
+}
+
 export default function AccessGuard({ children }: AccessGuardProps) {
   const router = useRouter();
   const [allowed, setAllowed] = useState(false);
 
   useEffect(() => {
-    const granted = sessionStorage.getItem("portalAccessGranted") === "true";
-    if (!granted) {
-      router.replace("/");
-    } else {
+    if (isAccessValid()) {
       setAllowed(true);
+    } else {
+      localStorage.removeItem(STORAGE_KEY);
+      router.replace("/");
     }
   }, [router]);
 
   if (!allowed) {
-    // Render nothing while we check — avoids a flash of the form
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="flex flex-col items-center gap-3 text-gray-400">

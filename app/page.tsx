@@ -3,6 +3,7 @@
 import { documents, forms } from "@/data/forms";
 import { slugify } from "@/utils/slugify";
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import ListDetails from "../components/ListDetails";
@@ -11,12 +12,27 @@ import { loadFilesFromLocalStorage } from "../utils/browserStorage";
 
 export default function HomePage() {
   const { searchTerm } = useForm();
+  const searchParams = useSearchParams();
 
   const [activeCategory, setActiveCategory] = useState("all");
   const [loading, setLoading] = useState(false);
   const [completedForms, setCompletedForms] = useState<string[]>([]);
   const [remountKey, setRemountKey] = useState(0);
   const [resetMessage, setResetMessage] = useState(false);
+
+  useEffect(() => {
+    // Capture the signed token from the email link (?t=...) and store it
+    // in localStorage so the verify modal can use it — even after the URL
+    // is cleaned up or the page is refreshed.
+    const t = searchParams.get("t");
+    if (t) {
+      localStorage.setItem("portalToken", t);
+      // Clean the token from the URL without a page reload
+      const url = new URL(window.location.href);
+      url.searchParams.delete("t");
+      window.history.replaceState({}, "", url.toString());
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     // This runs only in the browser
@@ -58,7 +74,7 @@ export default function HomePage() {
   const hasMatch = required.every((r) => completedForms.includes(r));
   function countRequiredCompleted(completedForms: string[]): number {
     const matched = required.filter((req) =>
-      completedForms.includes(req)
+      completedForms.includes(req),
     ).length;
 
     return matched;
@@ -171,10 +187,10 @@ export default function HomePage() {
                           {form === "Completed Forms"
                             ? completedCount
                             : form === "Not Completed Forms"
-                            ? forms.length - completedCount
-                            : form === "Reference Documents"
-                            ? 2
-                            : forms.length}
+                              ? forms.length - completedCount
+                              : form === "Reference Documents"
+                                ? 2
+                                : forms.length}
                         </div>
                       </dd>
                     </dl>
@@ -276,7 +292,7 @@ export default function HomePage() {
             <button
               onClick={() => {
                 const confirmReset = window.confirm(
-                  "Are you sure you want to restart the process? This will clear all data you have already entered."
+                  "Are you sure you want to restart the process? This will clear all data you have already entered.",
                 );
                 if (confirmReset) {
                   localStorage.removeItem("storedFiles");
